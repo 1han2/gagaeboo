@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useMemo } from 'react';
 
-const APP_PASSWORD = process.env.NEXT_PUBLIC_APP_PASSWORD || '0608';
+const APP_PASSWORD = process.env.APP_PASSWORD || '0000';
 
 const encodePassword = (password: string) => {
     if (typeof window !== 'undefined' && typeof window.btoa === 'function') {
