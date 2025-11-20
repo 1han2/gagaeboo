@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from 'react';
 
+const ACCESS_PASSWORD = process.env.NEXT_PUBLIC_APP_PASSWORD || '0608';
+
 export default function PasswordProtection({ children }: { children: React.ReactNode }) {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [password, setPassword] = useState('');
@@ -21,7 +23,7 @@ export default function PasswordProtection({ children }: { children: React.React
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        if (password === '0608') {
+        if (password === ACCESS_PASSWORD) {
             // Set cookie for 1 year
             const oneYear = 365 * 24 * 60 * 60;
             document.cookie = `auth_token=true; max-age=${oneYear}; path=/`;
