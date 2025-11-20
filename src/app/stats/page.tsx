@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { getTransactions } from '@/lib/dataService';
 import { Transaction } from '@/lib/types';
 import StatsChart from '@/components/StatsChart';
+import Skeleton from '@/components/Skeleton';
 import { format, subMonths, addMonths } from 'date-fns';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import styles from './page.module.css';
@@ -95,28 +96,38 @@ export default function StatsPage() {
             </div>
 
             <div className="card">
-                <div className={styles.totalContainer}>
-                    <span className={styles.totalLabel}>{selectedConsumer} 총 {viewType === 'income' ? '수입' : '지출'}</span>
-                    <span className={`${styles.totalAmount} ${viewType === 'income' ? styles.income : styles.expense}`}>
-                        {totalAmount.toLocaleString()}원
-                    </span>
-                    {prevTotalAmount > 0 && (
-                        <div style={{ marginTop: '0.5rem', fontSize: '0.875rem', color: 'var(--text-secondary)' }}>
-                            <span>지난달: {prevTotalAmount.toLocaleString()}원</span>
-                            <span style={{
-                                marginLeft: '0.5rem',
-                                color: Number(percentageChange) > 0 ? 'var(--danger)' : 'var(--success)',
-                                fontWeight: 600
-                            }}>
-                                {Number(percentageChange) > 0 ? '▲' : '▼'} {Math.abs(Number(percentageChange))}%
+                {loading ? (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                        <Skeleton style={{ width: '40%', height: '18px' }} />
+                        <Skeleton style={{ width: '60%', height: '36px' }} />
+                        <Skeleton style={{ width: '100%', height: '260px' }} />
+                    </div>
+                ) : (
+                    <>
+                        <div className={styles.totalContainer}>
+                            <span className={styles.totalLabel}>{selectedConsumer} 총 {viewType === 'income' ? '수입' : '지출'}</span>
+                            <span className={`${styles.totalAmount} ${viewType === 'income' ? styles.income : styles.expense}`}>
+                                {totalAmount.toLocaleString()}원
                             </span>
+                            {prevTotalAmount > 0 && (
+                                <div style={{ marginTop: '0.5rem', fontSize: '0.875rem', color: 'var(--text-secondary)' }}>
+                                    <span>지난달: {prevTotalAmount.toLocaleString()}원</span>
+                                    <span style={{
+                                        marginLeft: '0.5rem',
+                                        color: Number(percentageChange) > 0 ? 'var(--danger)' : 'var(--success)',
+                                        fontWeight: 600
+                                    }}>
+                                        {Number(percentageChange) > 0 ? '▲' : '▼'} {Math.abs(Number(percentageChange))}%
+                                    </span>
+                                </div>
+                            )}
                         </div>
-                    )}
-                </div>
 
-                <div className={styles.chartContainer}>
-                    <StatsChart transactions={filteredTransactions} prevTransactions={filteredPrevTransactions} type={viewType} />
-                </div>
+                        <div className={styles.chartContainer}>
+                            <StatsChart transactions={filteredTransactions} prevTransactions={filteredPrevTransactions} type={viewType} />
+                        </div>
+                    </>
+                )}
             </div>
         </main>
     );

@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import Calendar from '@/components/Calendar';
 import TransactionList from '@/components/TransactionList';
+import Skeleton from '@/components/Skeleton';
 import { getTransactions } from '@/lib/dataService';
 import { Transaction } from '@/lib/types';
 import { format } from 'date-fns';
@@ -42,20 +43,31 @@ export default function Home() {
 
   return (
     <main className="container" style={{ paddingBottom: '5rem' }}>
-      <div style={{
-        marginBottom: '1rem',
-        padding: '1rem',
-        background: 'var(--primary)',
-        color: 'white',
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        borderRadius: '1.5rem',
-      }}>
-        <span style={{ fontSize: '0.9rem', color: 'rgba(255, 255, 255, 0.9)', fontWeight: 600 }}>이번 달 총 지출</span>
-        <span style={{ fontSize: '1.5rem', fontWeight: 800, color: 'white' }}>
-          {totalMonthlyExpense.toLocaleString()}원
-        </span>
+      <div
+        style={{
+          marginBottom: '1rem',
+          padding: '1rem',
+          background: 'var(--primary)',
+          color: 'white',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          borderRadius: '1.5rem',
+          minHeight: '80px',
+        }}
+      >
+        <>
+          <span style={{ fontSize: '0.9rem', color: 'rgba(255, 255, 255, 0.9)', fontWeight: 600 }}>
+            {format(currentMonth, 'M월')} 총 지출
+          </span>
+          {loading ? (
+            <Skeleton style={{ width: '40%', height: '28px', borderRadius: '999px' }} />
+          ) : (
+            <span style={{ fontSize: '1.5rem', fontWeight: 800, color: 'white' }}>
+              {totalMonthlyExpense.toLocaleString()}원
+            </span>
+          )}
+        </>
       </div>
 
       <div className="desktop-layout">
@@ -66,10 +78,20 @@ export default function Home() {
             selectedDate={selectedDate}
             currentMonth={currentMonth}
             onMonthChange={setCurrentMonth}
+            isLoading={loading}
           />
         </div>
         <div className="desktop-right">
-          <TransactionList date={selectedDate} transactions={transactions} />
+          {loading ? (
+            <div className="card" style={{ minHeight: '400px' }}>
+              <Skeleton style={{ width: '60%', height: '22px', marginBottom: '1rem' }} />
+              {[...Array(5)].map((_, idx) => (
+                <Skeleton key={idx} style={{ width: '100%', height: '60px', marginBottom: '0.75rem' }} />
+              ))}
+            </div>
+          ) : (
+            <TransactionList date={selectedDate} transactions={transactions} />
+          )}
         </div>
       </div>
     </main>

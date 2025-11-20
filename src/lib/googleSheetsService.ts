@@ -18,16 +18,58 @@ const auth = new google.auth.GoogleAuth({
 
 const sheets = google.sheets({ version: 'v4', auth });
 
+const CACHE_TTL_MS = 60 * 1000;
+const transactionsCache = new Map<string, { timestamp: number; data: Transaction[] }>();
+
+const getCacheKey = (month?: string) => month ?? 'all';
+
+const getMonthRowRange = async (month: string) => {
+    const dateColumn = await sheets.spreadsheets.values.get({
+        spreadsheetId: SPREADSHEET_ID!,
+        range: 'Transactions!B2:B',
+    });
+
+    const dates = dateColumn.data.values?.map(row => row[0]) ?? [];
+    const startIndex = dates.findIndex(date => typeof date === 'string' && date.startsWith(month));
+    if (startIndex === -1) {
+        return null;
+    }
+
+    let endIndex = startIndex;
+    while (endIndex + 1 < dates.length && typeof dates[endIndex + 1] === 'string' && dates[endIndex + 1].startsWith(month)) {
+        endIndex++;
+    }
+
+    return {
+        startRow: startIndex + 2,
+        endRow: endIndex + 2,
+    };
+};
+
 export const getSheetTransactions = async (month?: string): Promise<Transaction[]> => {
     if (!SPREADSHEET_ID || !GOOGLE_CLIENT_EMAIL || !GOOGLE_PRIVATE_KEY) {
         console.warn('Google Sheets credentials missing');
         return [];
     }
 
+    const cacheKey = getCacheKey(month);
+    const cached = transactionsCache.get(cacheKey);
+    if (cached && Date.now() - cached.timestamp < CACHE_TTL_MS) {
+        return cached.data;
+    }
+
     try {
+        let range = 'Transactions!A2:H';
+        if (month) {
+            const rowRange = await getMonthRowRange(month);
+            if (rowRange) {
+                range = `Transactions!A${rowRange.startRow}:H${rowRange.endRow}`;
+            }
+        }
+
         const response = await sheets.spreadsheets.values.get({
             spreadsheetId: SPREADSHEET_ID,
-            range: 'Transactions!A2:H', // Assuming headers in row 1
+            range,
         });
 
         const rows = response.data.values;
@@ -52,6 +94,7 @@ export const getSheetTransactions = async (month?: string): Promise<Transaction[
             return transactions.filter(t => t.date.startsWith(month));
         }
 
+        transactionsCache.set(cacheKey, { timestamp: Date.now(), data: transactions });
         return transactions;
     } catch (error) {
         console.error('Error fetching from Google Sheets:', error);

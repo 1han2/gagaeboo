@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameMonth, isSameDay, addMonths, subMonths, getDay } from 'date-fns';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import styles from './Calendar.module.css';
+import Skeleton from './Skeleton';
 import { Transaction } from '@/lib/types';
 import { useRouter } from 'next/navigation';
 
@@ -13,9 +14,10 @@ interface CalendarProps {
     selectedDate: Date;
     currentMonth: Date;
     onMonthChange: (date: Date) => void;
+    isLoading?: boolean;
 }
 
-export default function Calendar({ transactions, onDateSelect, selectedDate, currentMonth, onMonthChange }: CalendarProps) {
+export default function Calendar({ transactions, onDateSelect, selectedDate, currentMonth, onMonthChange, isLoading }: CalendarProps) {
     const router = useRouter();
     const monthStart = startOfMonth(currentMonth);
     const monthEnd = endOfMonth(currentMonth);
@@ -68,17 +70,22 @@ export default function Calendar({ transactions, onDateSelect, selectedDate, cur
                             onClick={() => onDateSelect(date)}
                             onDoubleClick={() => router.push(`/add?date=${format(date, 'yyyy-MM-dd')}`)}
                             className={`${styles.dayCell} ${isSelected ? styles.selected : ''} ${isToday ? styles.today : ''}`}
+                            disabled={isLoading}
                         >
                             <span className={styles.dayNumber}>{format(date, 'd')}</span>
-                            <div className={styles.dots}>
-                                {income > 0 && <div className={`${styles.dot} ${styles.incomeDot}`} />}
-                                {expense > 0 && <div className={`${styles.dot} ${styles.expenseDot}`} />}
-                            </div>
-                            {(income > 0 || expense > 0) && (
-                                <div className={styles.dayTotal}>
-                                    {expense > 0 && <span className={styles.expenseText}>-{expense.toLocaleString()}</span>}
-                                    {income > 0 && <span className={styles.incomeText}>+{income.toLocaleString()}</span>}
-                                </div>
+                            {!isLoading && (
+                                <>
+                                    <div className={styles.dots}>
+                                        {income > 0 && <div className={`${styles.dot} ${styles.incomeDot}`} />}
+                                        {expense > 0 && <div className={`${styles.dot} ${styles.expenseDot}`} />}
+                                    </div>
+                                    {(income > 0 || expense > 0) && (
+                                        <div className={styles.dayTotal}>
+                                            {expense > 0 && <span className={styles.expenseText}>-{expense.toLocaleString()}</span>}
+                                            {income > 0 && <span className={styles.incomeText}>+{income.toLocaleString()}</span>}
+                                        </div>
+                                    )}
+                                </>
                             )}
                         </button>
                     );
