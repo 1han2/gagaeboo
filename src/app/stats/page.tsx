@@ -47,6 +47,14 @@ export default function StatsPage() {
         .filter(t => t.type === viewType)
         .reduce((sum, t) => sum + t.amount, 0);
 
+    const prevTotalAmount = filteredPrevTransactions
+        .filter(t => t.type === viewType)
+        .reduce((sum, t) => sum + t.amount, 0);
+
+    const percentageChange = prevTotalAmount > 0
+        ? ((totalAmount - prevTotalAmount) / prevTotalAmount * 100).toFixed(1)
+        : 0;
+
     return (
         <main className="container" style={{ paddingBottom: '5rem' }}>
             <div className={styles.header}>
@@ -92,6 +100,18 @@ export default function StatsPage() {
                     <span className={`${styles.totalAmount} ${viewType === 'income' ? styles.income : styles.expense}`}>
                         {totalAmount.toLocaleString()}원
                     </span>
+                    {prevTotalAmount > 0 && (
+                        <div style={{ marginTop: '0.5rem', fontSize: '0.875rem', color: 'var(--text-secondary)' }}>
+                            <span>지난달: {prevTotalAmount.toLocaleString()}원</span>
+                            <span style={{
+                                marginLeft: '0.5rem',
+                                color: Number(percentageChange) > 0 ? 'var(--danger)' : 'var(--success)',
+                                fontWeight: 600
+                            }}>
+                                {Number(percentageChange) > 0 ? '▲' : '▼'} {Math.abs(Number(percentageChange))}%
+                            </span>
+                        </div>
+                    )}
                 </div>
 
                 <div className={styles.chartContainer}>

@@ -231,7 +231,6 @@ export default function StatsChart({ transactions, prevTransactions = [], type }
                 }}>
                     <div style={{
                         padding: '1rem',
-                        borderBottom: '1px solid var(--border)',
                         display: 'flex',
                         justifyContent: 'space-between',
                         alignItems: 'center'

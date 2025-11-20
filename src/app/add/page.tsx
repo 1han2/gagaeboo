@@ -107,9 +107,9 @@ function AddTransactionForm() {
     return (
         <main className="container" style={{ paddingBottom: '5rem' }}>
             <div className={styles.header}>
-                <Link href="/" className={styles.backBtn}>
+                <button onClick={() => router.back()} className={styles.backBtn}>
                     <ChevronLeft size={24} />
-                </Link>
+                </button>
                 <h1 className={styles.pageTitle}>{idParam ? '내역 수정' : '내역 수정'}</h1>
                 <div style={{ width: 24 }} />
             </div>
@@ -180,11 +180,14 @@ function AddTransactionForm() {
                             <div className={styles.categoryGrid}>
                                 {[
                                     { name: '식비', icon: '🍚' },
+                                    { name: '카페', icon: '☕' },
+                                    { name: '외식', icon: '🍽️' },
                                     { name: '교통', icon: '🚌' },
                                     { name: '쇼핑', icon: '🛍️' },
                                     { name: '생활', icon: '🏠' },
                                     { name: '주거/통신', icon: '📱' },
                                     { name: '의료/건강', icon: '💊' },
+                                    { name: '미용', icon: '💇' },
                                     { name: '금융', icon: '💰' },
                                     { name: '문화/여가', icon: '🎬' },
                                     { name: '교육/학습', icon: '📚' },

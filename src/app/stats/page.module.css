@@ -52,6 +52,11 @@
     font-weight: 600;
 }
 
+.activeFilter:hover {
+    background-color: var(--text-main);
+    color: white !important;
+}
+
 .toggleContainer {
     display: flex;
     background: var(--bg-card);

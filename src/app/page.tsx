@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useSearchParams, useRouter } from 'next/navigation';
 import Calendar from '@/components/Calendar';
 import TransactionList from '@/components/TransactionList';
 import { getTransactions } from '@/lib/dataService';
@@ -8,8 +9,13 @@ import { Transaction } from '@/lib/types';
 import { format } from 'date-fns';
 
 export default function Home() {
+  const searchParams = useSearchParams();
+  const router = useRouter();
   const [currentMonth, setCurrentMonth] = useState(new Date());
-  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [selectedDate, setSelectedDate] = useState(() => {
+    const dateParam = searchParams.get('date');
+    return dateParam ? new Date(dateParam) : new Date();
+  });
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -23,6 +29,12 @@ export default function Home() {
     };
     loadData();
   }, [currentMonth]);
+
+  const handleDateSelect = (date: Date) => {
+    setSelectedDate(date);
+    const dateStr = format(date, 'yyyy-MM-dd');
+    router.replace(`/?date=${dateStr}`, { scroll: false });
+  };
 
   const totalMonthlyExpense = transactions
     .filter(t => t.type === 'expense')
@@ -49,7 +61,7 @@ export default function Home() {
         <div className="desktop-left">
           <Calendar
             transactions={transactions}
-            onDateSelect={setSelectedDate}
+            onDateSelect={handleDateSelect}
             selectedDate={selectedDate}
             currentMonth={currentMonth}
             onMonthChange={setCurrentMonth}
