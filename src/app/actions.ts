@@ -5,7 +5,7 @@ import { getTransactions as getMockTransactions, addTransaction as addMockTransa
 import { getSheetTransactions, addSheetTransaction, updateSheetTransaction, deleteSheetTransaction } from '@/lib/googleSheetsService';
 import { revalidatePath } from 'next/cache';
 
-const USE_GOOGLE_SHEETS = process.env.USE_GOOGLE_SHEETS === 'true';
+const USE_GOOGLE_SHEETS = process.env.NEXT_PUBLIC_USE_GOOGLE_SHEETS === 'true';
 
 export async function fetchTransactions(month?: string): Promise<Transaction[]> {
     if (USE_GOOGLE_SHEETS) {

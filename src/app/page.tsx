@@ -50,6 +50,7 @@ export default function Home() {
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center',
+        borderRadius: 'var(--radius)',
       }}>
         <span style={{ fontSize: '0.9rem', color: 'rgba(255, 255, 255, 0.9)', fontWeight: 600 }}>이번 달 총 지출</span>
         <span style={{ fontSize: '1.5rem', fontWeight: 800, color: 'white' }}>
