@@ -1,14 +1,25 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 
 const ACCESS_PASSWORD = process.env.NEXT_PUBLIC_APP_PASSWORD || '0608';
+
+const encodePassword = (password: string) => {
+    if (typeof window !== 'undefined' && typeof window.btoa === 'function') {
+        return window.btoa(password);
+    }
+    if (typeof globalThis !== 'undefined' && (globalThis as any).Buffer) {
+        return (globalThis as any).Buffer.from(password, 'utf-8').toString('base64');
+    }
+    return password;
+};
 
 export default function PasswordProtection({ children }: { children: React.ReactNode }) {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [password, setPassword] = useState('');
     const [error, setError] = useState(false);
     const [loading, setLoading] = useState(true);
+    const passwordSignature = useMemo(() => encodePassword(ACCESS_PASSWORD), []);
 
     useEffect(() => {
         // Check for existing cookie
@@ -16,17 +27,22 @@ export default function PasswordProtection({ children }: { children: React.React
         const authCookie = cookies.find(c => c.trim().startsWith('auth_token='));
 
         if (authCookie) {
-            setIsAuthenticated(true);
+            const [, value] = authCookie.split('=');
+            if (value === passwordSignature) {
+                setIsAuthenticated(true);
+            } else {
+                document.cookie = 'auth_token=; Max-Age=0; path=/';
+            }
         }
         setLoading(false);
-    }, []);
+    }, [passwordSignature]);
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         if (password === ACCESS_PASSWORD) {
             // Set cookie for 1 year
             const oneYear = 365 * 24 * 60 * 60;
-            document.cookie = `auth_token=true; max-age=${oneYear}; path=/`;
+            document.cookie = `auth_token=${passwordSignature}; max-age=${oneYear}; path=/`;
             setIsAuthenticated(true);
             setError(false);
         } else {
