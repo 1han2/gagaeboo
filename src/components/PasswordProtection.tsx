@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useMemo } from 'react';
 
-const ACCESS_PASSWORD = process.env.NEXT_PUBLIC_APP_PASSWORD || '0608';
+const APP_PASSWORD = process.env.NEXT_PUBLIC_APP_PASSWORD || '0608';
 
 const encodePassword = (password: string) => {
     if (typeof window !== 'undefined' && typeof window.btoa === 'function') {
@@ -19,7 +19,7 @@ export default function PasswordProtection({ children }: { children: React.React
     const [password, setPassword] = useState('');
     const [error, setError] = useState(false);
     const [loading, setLoading] = useState(true);
-    const passwordSignature = useMemo(() => encodePassword(ACCESS_PASSWORD), []);
+    const passwordSignature = useMemo(() => encodePassword(APP_PASSWORD), []);
 
     useEffect(() => {
         // Check for existing cookie
@@ -39,7 +39,7 @@ export default function PasswordProtection({ children }: { children: React.React
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        if (password === ACCESS_PASSWORD) {
+        if (password === APP_PASSWORD) {
             // Set cookie for 1 year
             const oneYear = 365 * 24 * 60 * 60;
             document.cookie = `auth_token=${passwordSignature}; max-age=${oneYear}; path=/`;
