@@ -27,10 +27,10 @@
    - 다음 내용 추가:
      ```bash
     NEXT_PUBLIC_USE_GOOGLE_SHEETS=true
-    APP_PASSWORD=0000
-     GOOGLE_SHEET_ID=구글_시트_ID
-     GOOGLE_CLIENT_EMAIL=서비스_계정_이메일
-     GOOGLE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\n..."
+    NEXT_PUBLIC_APP_PASSWORD=0000
+    GOOGLE_SHEET_ID=구글_시트_ID
+    GOOGLE_CLIENT_EMAIL=서비스_계정_이메일
+    GOOGLE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\n..."
      ```
 
 ## 실행 방법

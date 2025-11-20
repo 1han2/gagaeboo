@@ -1,9 +1,8 @@
 'use server';
 
 import { Transaction } from '@/lib/types';
-import { getTransactions as getMockTransactions, addTransaction as addMockTransaction } from '@/lib/mockFinanceService';
 import { getSheetTransactions, addSheetTransaction, updateSheetTransaction, deleteSheetTransaction } from '@/lib/googleSheetsService';
-import { revalidatePath } from 'next/cache';
+import { revalidatePath, revalidateTag } from 'next/cache';
 
 const USE_GOOGLE_SHEETS = process.env.NEXT_PUBLIC_USE_GOOGLE_SHEETS === 'true';
 
@@ -56,6 +55,7 @@ export async function fetchTransactions(month?: string): Promise<Transaction[]> 
 export async function createTransaction(transaction: Transaction): Promise<void> {
     if (USE_GOOGLE_SHEETS) {
         await addSheetTransaction(transaction);
+        revalidateTag('transactions', {});
     } else {
         // Server-side mock add (no-op or log)
         console.log('Mock Transaction Added (Server):', transaction);
@@ -67,6 +67,7 @@ export async function createTransaction(transaction: Transaction): Promise<void>
 export async function updateTransactionAction(transaction: Transaction): Promise<void> {
     if (USE_GOOGLE_SHEETS) {
         await updateSheetTransaction(transaction);
+        revalidateTag('transactions', {});
     } else {
         console.log('Mock Transaction Updated (Server):', transaction);
     }
@@ -77,6 +78,7 @@ export async function updateTransactionAction(transaction: Transaction): Promise
 export async function deleteTransactionAction(id: string): Promise<void> {
     if (USE_GOOGLE_SHEETS) {
         await deleteSheetTransaction(id);
+        revalidateTag('transactions', {});
     } else {
         console.log('Mock Transaction Deleted (Server):', id);
     }

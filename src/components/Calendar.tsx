@@ -1,10 +1,9 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameMonth, isSameDay, addMonths, subMonths, getDay } from 'date-fns';
+
+import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameDay, addMonths, subMonths, getDay } from 'date-fns';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import styles from './Calendar.module.css';
-import Skeleton from './Skeleton';
 import { Transaction } from '@/lib/types';
 import { useRouter } from 'next/navigation';
 
@@ -41,11 +40,19 @@ export default function Calendar({ transactions, onDateSelect, selectedDate, cur
     return (
         <div className={styles.calendarContainer}>
             <div className={styles.header}>
-                <button onClick={() => onMonthChange(subMonths(currentMonth, 1))} className={styles.navBtn}>
+                <button onClick={() => {
+                    const newDate = startOfMonth(subMonths(currentMonth, 1));
+                    onMonthChange(newDate);
+                    onDateSelect(newDate);
+                }} className={styles.navBtn}>
                     <ChevronLeft size={20} />
                 </button>
                 <h2 className={styles.monthTitle}>{format(currentMonth, 'yyyy년 M월')}</h2>
-                <button onClick={() => onMonthChange(addMonths(currentMonth, 1))} className={styles.navBtn}>
+                <button onClick={() => {
+                    const newDate = startOfMonth(addMonths(currentMonth, 1));
+                    onMonthChange(newDate);
+                    onDateSelect(newDate);
+                }} className={styles.navBtn}>
                     <ChevronRight size={20} />
                 </button>
             </div>

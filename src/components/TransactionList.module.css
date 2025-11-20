@@ -102,7 +102,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0.75rem 1rem;
+    padding: 0.5rem 0.75rem;
 }
 
 .itemLeft {
@@ -112,16 +112,17 @@
 }
 
 .category {
-    font-size: 0.8rem;
+    font-size: 0.75rem;
     color: var(--text-secondary);
     background-color: var(--bg-main);
-    padding: 0.2rem 0.5rem;
+    padding: 0.15rem 0.4rem;
     border-radius: 4px;
     align-self: flex-start;
 }
 
 .merchant {
     font-weight: 600;
+    font-size: 0.9rem;
     color: var(--text-main);
     overflow: hidden;
     text-overflow: ellipsis;
@@ -133,21 +134,23 @@
     display: flex;
     flex-direction: column;
     align-items: flex-end;
-    gap: 0.25rem;
+    gap: 0.1rem;
 }
 
 .income {
     color: var(--success);
     font-weight: 700;
+    font-size: 0.9rem;
 }
 
 .expense {
     color: var(--text-main);
     font-weight: 700;
+    font-size: 0.9rem;
 }
 
 .consumer {
-    font-size: 0.8rem;
+    font-size: 0.75rem;
     color: var(--text-muted);
 }
 

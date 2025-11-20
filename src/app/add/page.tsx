@@ -5,7 +5,6 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { addTransaction, updateTransaction, deleteTransaction, getTransactions } from '@/lib/dataService';
 import { Transaction } from '@/lib/types';
 import { ChevronLeft } from 'lucide-react';
-import Link from 'next/link';
 import styles from './page.module.css';
 import Calendar from '@/components/Calendar';
 import { format } from 'date-fns';
@@ -95,8 +94,7 @@ function AddTransactionForm() {
             await addTransaction(transactionData);
         }
 
-        router.back();
-        router.refresh();
+        router.replace(`/?date=${formData.date}`, { scroll: false });
     };
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {

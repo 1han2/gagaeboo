@@ -113,7 +113,7 @@
 .dayTotal {
     display: flex;
     flex-direction: column;
-    font-size: 0.65rem;
+    font-size: 0.55rem;
     line-height: 1.1;
     gap: 2px;
     width: 100%;
@@ -125,11 +125,11 @@
 }
 
 .expenseText {
-    color: var(--danger);
+    color: var(--primary);
 }
 
 .incomeText {
-    color: var(--success);
+    color: var(--primary);
 }
 
 .selected .expenseText,

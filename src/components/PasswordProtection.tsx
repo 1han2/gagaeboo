@@ -8,8 +8,8 @@ const encodePassword = (password: string) => {
     if (typeof window !== 'undefined' && typeof window.btoa === 'function') {
         return window.btoa(password);
     }
-    if (typeof globalThis !== 'undefined' && (globalThis as any).Buffer) {
-        return (globalThis as any).Buffer.from(password, 'utf-8').toString('base64');
+    if (typeof globalThis !== 'undefined' && (globalThis as { Buffer?: { from: (str: string, enc: string) => { toString: (enc: string) => string } } }).Buffer) {
+        return (globalThis as { Buffer: { from: (str: string, enc: string) => { toString: (enc: string) => string } } }).Buffer.from(password, 'utf-8').toString('base64');
     }
     return password;
 };
@@ -27,8 +27,9 @@ export default function PasswordProtection({ children }: { children: React.React
         const authCookie = cookies.find(c => c.trim().startsWith('auth_token='));
 
         if (authCookie) {
-            const [, value] = authCookie.split('=');
+            const value = authCookie.substring(authCookie.indexOf('=') + 1);
             if (value === passwordSignature) {
+                // eslint-disable-next-line react-hooks/set-state-in-effect
                 setIsAuthenticated(true);
             } else {
                 document.cookie = 'auth_token=; Max-Age=0; path=/';

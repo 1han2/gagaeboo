@@ -12,8 +12,11 @@ import { format } from 'date-fns';
 export default function Home() {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const [currentMonth, setCurrentMonth] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState(() => {
+    const dateParam = searchParams.get('date');
+    return dateParam ? new Date(dateParam) : new Date();
+  });
+  const [currentMonth, setCurrentMonth] = useState(() => {
     const dateParam = searchParams.get('date');
     return dateParam ? new Date(dateParam) : new Date();
   });
@@ -46,14 +49,14 @@ export default function Home() {
       <div
         style={{
           marginBottom: '1rem',
-          padding: '1rem',
+          padding: '0.75rem 1rem',
           background: 'var(--primary)',
           color: 'white',
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
-          borderRadius: '1.5rem',
-          minHeight: '80px',
+          borderRadius: '1rem',
+          minHeight: '60px',
         }}
       >
         <>

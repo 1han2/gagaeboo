@@ -18,88 +18,56 @@ const auth = new google.auth.GoogleAuth({
 
 const sheets = google.sheets({ version: 'v4', auth });
 
-const CACHE_TTL_MS = 60 * 1000;
-const transactionsCache = new Map<string, { timestamp: number; data: Transaction[] }>();
+import { unstable_cache } from 'next/cache';
 
-const getCacheKey = (month?: string) => month ?? 'all';
-
-const getMonthRowRange = async (month: string) => {
-    const dateColumn = await sheets.spreadsheets.values.get({
-        spreadsheetId: SPREADSHEET_ID!,
-        range: 'Transactions!B2:B',
-    });
-
-    const dates = dateColumn.data.values?.map(row => row[0]) ?? [];
-    const startIndex = dates.findIndex(date => typeof date === 'string' && date.startsWith(month));
-    if (startIndex === -1) {
-        return null;
-    }
-
-    let endIndex = startIndex;
-    while (endIndex + 1 < dates.length && typeof dates[endIndex + 1] === 'string' && dates[endIndex + 1].startsWith(month)) {
-        endIndex++;
-    }
-
-    return {
-        startRow: startIndex + 2,
-        endRow: endIndex + 2,
-    };
-};
-
-export const getSheetTransactions = async (month?: string): Promise<Transaction[]> => {
-    if (!SPREADSHEET_ID || !GOOGLE_CLIENT_EMAIL || !GOOGLE_PRIVATE_KEY) {
-        console.warn('Google Sheets credentials missing');
-        return [];
-    }
-
-    const cacheKey = getCacheKey(month);
-    const cached = transactionsCache.get(cacheKey);
-    if (cached && Date.now() - cached.timestamp < CACHE_TTL_MS) {
-        return cached.data;
-    }
-
-    try {
-        let range = 'Transactions!A2:H';
-        if (month) {
-            const rowRange = await getMonthRowRange(month);
-            if (rowRange) {
-                range = `Transactions!A${rowRange.startRow}:H${rowRange.endRow}`;
-            }
-        }
-
-        const response = await sheets.spreadsheets.values.get({
-            spreadsheetId: SPREADSHEET_ID,
-            range,
-        });
-
-        const rows = response.data.values;
-        if (!rows || rows.length === 0) {
+const getAllTransactions = unstable_cache(
+    async (): Promise<Transaction[]> => {
+        if (!SPREADSHEET_ID || !GOOGLE_CLIENT_EMAIL || !GOOGLE_PRIVATE_KEY) {
+            console.warn('Google Sheets credentials missing');
             return [];
         }
 
-        // Map rows to Transaction objects
-        // Columns: ID, Date, Amount, Category, Merchant, Consumer, Type, Memo
-        const transactions: Transaction[] = rows.map((row) => ({
-            id: row[0],
-            date: row[1],
-            amount: Number(row[2]),
-            category: row[3],
-            merchant: row[4],
-            consumer: row[5],
-            type: row[6] as 'income' | 'expense',
-            memo: row[7] || '',
-        }));
+        try {
+            console.log('Fetching all transactions from Google Sheets...');
+            const response = await sheets.spreadsheets.values.get({
+                spreadsheetId: SPREADSHEET_ID,
+                range: 'Transactions!A2:H',
+            });
 
-        if (month) {
-            return transactions.filter(t => t.date.startsWith(month));
+            const rows = response.data.values;
+            if (!rows || rows.length === 0) {
+                return [];
+            }
+
+            // Map rows to Transaction objects
+            // Columns: ID, Date, Amount, Category, Merchant, Consumer, Type, Memo
+            return rows.map((row) => ({
+                id: row[0],
+                date: row[1],
+                amount: Number(row[2]),
+                category: row[3],
+                merchant: row[4],
+                consumer: row[5],
+                type: row[6] as 'income' | 'expense',
+                memo: row[7] || '',
+            }));
+        } catch (error) {
+            console.error('Error fetching from Google Sheets:', error);
+            return [];
         }
+    },
+    ['transactions'],
+    { tags: ['transactions'], revalidate: 3600 }
+);
 
-        transactionsCache.set(cacheKey, { timestamp: Date.now(), data: transactions });
-        return transactions;
-    } catch (error) {
-        console.error('Error fetching from Google Sheets:', error);
-        return [];
+export const getSheetTransactions = async (month?: string): Promise<Transaction[]> => {
+    const transactions = await getAllTransactions();
+
+    if (month) {
+        return transactions.filter(t => t.date.startsWith(month));
     }
+
+    return transactions;
 };
 
 export const addSheetTransaction = async (transaction: Transaction): Promise<void> => {

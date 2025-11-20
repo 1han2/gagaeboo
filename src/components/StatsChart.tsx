@@ -10,7 +10,7 @@ import {
     BarElement,
     Title
 } from 'chart.js';
-import { Doughnut, Bar } from 'react-chartjs-2';
+import { Bar } from 'react-chartjs-2';
 import { Transaction } from '@/lib/types';
 import { useMemo, useState } from 'react';
 import Link from 'next/link';
@@ -170,7 +170,7 @@ export default function StatsChart({ transactions, prevTransactions = [], type }
             </div>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-                {sortedCategories.map((cat, index) => {
+                {sortedCategories.map((cat) => {
                     const diff = cat.value - cat.prevValue;
                     const isIncrease = diff > 0;
                     const isSelected = selectedCategory === cat.label;
@@ -212,75 +212,93 @@ export default function StatsChart({ transactions, prevTransactions = [], type }
                         </button>
                     );
                 })}
-            </div>
-
-            {selectedCategory && (
-                <div style={{
-                    position: 'fixed',
-                    bottom: 0,
-                    left: 0,
-                    right: 0,
-                    height: '40vh',
-                    backgroundColor: 'white',
-                    borderTopLeftRadius: '1rem',
-                    borderTopRightRadius: '1rem',
-                    boxShadow: '0 -4px 6px -1px rgba(0, 0, 0, 0.1)',
-                    zIndex: 100,
-                    display: 'flex',
-                    flexDirection: 'column',
-                    borderTop: '1px solid var(--border)',
-                    animation: 'slideUp 0.3s ease-out'
-                }}>
-                    <div style={{
-                        padding: '1rem',
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        alignItems: 'center'
-                    }}>
-                        <h3 style={{ fontSize: '1.1rem', fontWeight: 700 }}>{selectedCategory} 상세 내역</h3>
-                        <button
+                {selectedCategory && (
+                    <>
+                        <div
+                            style={{
+                                position: 'fixed',
+                                top: 0,
+                                left: 0,
+                                right: 0,
+                                bottom: 0,
+                                backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                                zIndex: 99,
+                                animation: 'fadeIn 0.2s ease-out'
+                            }}
                             onClick={() => setSelectedCategory(null)}
-                            style={{ padding: '0.5rem', fontSize: '1.5rem', lineHeight: 0.5 }}
-                        >
-                            ×
-                        </button>
-                    </div>
-                    <div style={{ overflowY: 'auto', padding: '1rem', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-                        {getCategoryTransactions(selectedCategory).map(t => (
-                            <Link key={t.id} href={`/add?id=${t.id}&date=${t.date}`} style={{ textDecoration: 'none', color: 'inherit' }}>
-                                <div style={{
-                                    display: 'flex',
-                                    justifyContent: 'space-between',
-                                    alignItems: 'center',
-                                    padding: '0.75rem',
-                                    backgroundColor: 'var(--bg-main)',
-                                    borderRadius: 'var(--radius)'
-                                }}>
-                                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
-                                        <span style={{ fontWeight: 600, color: 'var(--text-main)' }}>{t.merchant}</span>
-                                        <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>{t.date}</span>
-                                    </div>
-                                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '0.25rem' }}>
-                                        <span style={{ fontWeight: 700 }}>{t.amount.toLocaleString()}원</span>
-                                        <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>{t.consumer}</span>
-                                    </div>
-                                </div>
-                            </Link>
-                        ))}
-                        {getCategoryTransactions(selectedCategory).length === 0 && (
-                            <div style={{ textAlign: 'center', color: 'var(--text-muted)', padding: '2rem' }}>
-                                내역이 없습니다.
+                        />
+                        <div style={{
+                            position: 'fixed',
+                            bottom: 0,
+                            left: 0,
+                            right: 0,
+                            height: '70vh',
+                            backgroundColor: 'white',
+                            borderTopLeftRadius: '1rem',
+                            borderTopRightRadius: '1rem',
+                            boxShadow: '0 -4px 6px -1px rgba(0, 0, 0, 0.1)',
+                            zIndex: 100,
+                            display: 'flex',
+                            flexDirection: 'column',
+                            borderTop: '1px solid var(--border)',
+                            animation: 'slideUp 0.3s ease-out'
+                        }}>
+                            <div style={{
+                                padding: '1rem',
+                                display: 'flex',
+                                justifyContent: 'space-between',
+                                alignItems: 'center'
+                            }}>
+                                <h3 style={{ fontSize: '1.1rem', fontWeight: 700 }}>{selectedCategory} 상세 내역</h3>
+                                <button
+                                    onClick={() => setSelectedCategory(null)}
+                                    style={{ padding: '0.5rem', fontSize: '1.5rem', lineHeight: 0.5 }}
+                                >
+                                    ×
+                                </button>
                             </div>
-                        )}
-                    </div>
-                </div>
-            )}
-            <style jsx global>{`
+                            <div style={{ overflowY: 'auto', padding: '1rem', paddingBottom: '6rem', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                                {getCategoryTransactions(selectedCategory).map(t => (
+                                    <Link key={t.id} href={`/add?id=${t.id}&date=${t.date}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+                                        <div style={{
+                                            display: 'flex',
+                                            justifyContent: 'space-between',
+                                            alignItems: 'center',
+                                            padding: '0.5rem 0.75rem',
+                                            backgroundColor: 'var(--bg-main)',
+                                            borderRadius: 'var(--radius)'
+                                        }}>
+                                            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.1rem' }}>
+                                                <span style={{ fontWeight: 600, color: 'var(--text-main)', fontSize: '0.9rem' }}>{t.merchant}</span>
+                                                <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>{t.date}</span>
+                                            </div>
+                                            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '0.1rem' }}>
+                                                <span style={{ fontWeight: 700, fontSize: '0.9rem' }}>{t.amount.toLocaleString()}원</span>
+                                                <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{t.consumer}</span>
+                                            </div>
+                                        </div>
+                                    </Link>
+                                ))}
+                                {getCategoryTransactions(selectedCategory).length === 0 && (
+                                    <div style={{ textAlign: 'center', color: 'var(--text-muted)', padding: '2rem' }}>
+                                        내역이 없습니다.
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    </>
+                )}
+                <style jsx global>{`
                 @keyframes slideUp {
                     from { transform: translateY(100%); }
                     to { transform: translateY(0); }
                 }
+                @keyframes fadeIn {
+                    from { opacity: 0; }
+                    to { opacity: 1; }
+                }
             `}</style>
+            </div>
         </div>
     );
 }
