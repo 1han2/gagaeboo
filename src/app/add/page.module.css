@@ -27,7 +27,11 @@
     display: flex;
     gap: 1rem;
     margin-top: 0.5rem;
-    font-size: 1.25rem;
+}
+
+.actionButtons button {
+    font-size: 1.125rem;
+    font-weight: 700;
 }
 
 .deleteBtn {

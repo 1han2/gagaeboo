@@ -123,6 +123,10 @@
 .merchant {
     font-weight: 600;
     color: var(--text-main);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 150px;
 }
 
 .itemRight {
