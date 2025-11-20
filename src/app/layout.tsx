@@ -7,7 +7,7 @@ import PasswordProtection from "@/components/PasswordProtection";
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 
 export const metadata: Metadata = {
-  title: "가계부",
+  title: "우리 가계부",
   description: "A simple finance book for couples",
 };
 
