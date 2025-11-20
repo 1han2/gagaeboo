@@ -26,7 +26,7 @@
 .actionButtons {
     display: flex;
     gap: 1rem;
-    margin-top: 2rem;
+    margin-top: 0.5rem;
     padding-top: 1rem;
 }
 
@@ -56,7 +56,6 @@
     padding: 0.35rem;
     border-radius: var(--radius);
     margin-bottom: 2rem;
-    border: 1px solid var(--border);
 }
 
 .typeBtn {
@@ -71,13 +70,11 @@
 .activeExpense {
     background: white;
     color: var(--danger);
-    border: 1px solid var(--border);
 }
 
 .activeIncome {
     background: white;
     color: var(--success);
-    border: 1px solid var(--border);
 }
 
 .amountInputWrapper {
@@ -132,21 +129,17 @@
     gap: 0.25rem;
     padding: 0.75rem 0.25rem;
     border-radius: var(--radius);
-    border: 1px solid var(--border);
-    background: var(--bg-card);
+    background: var(--bg-main);
     color: var(--text-secondary);
     transition: all 0.2s;
 }
 
 .categoryBtn:hover {
     background: var(--bg-hover);
-    border-color: var(--text-muted);
 }
 
 .activeCategory {
     background: #e0e7ff;
-    /* Light Indigo */
-    border-color: var(--primary);
     color: var(--primary);
 }
 

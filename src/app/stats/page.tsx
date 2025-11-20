@@ -7,6 +7,7 @@ import StatsChart from '@/components/StatsChart';
 import { format, subMonths, addMonths } from 'date-fns';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import styles from './page.module.css';
+import { USER_LABELS } from '@/lib/config';
 
 export default function StatsPage() {
     const [currentMonth, setCurrentMonth] = useState(new Date());
@@ -74,7 +75,7 @@ export default function StatsPage() {
             </div>
 
             <div className={styles.filterContainer}>
-                {['전체', '함께', '남편', '아내'].map(consumer => (
+                {['전체', '함께', USER_LABELS.person1, USER_LABELS.person2].map(consumer => (
                     <button
                         key={consumer}
                         className={`${styles.filterBtn} ${selectedConsumer === consumer ? styles.activeFilter : ''}`}

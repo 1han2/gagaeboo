@@ -2,16 +2,15 @@
     background: var(--bg-card);
     border-radius: var(--radius);
     padding: 1.25rem;
-    border: 1px solid var(--border);
     height: 100%;
     display: flex;
     flex-direction: column;
+    margin-bottom: 1rem;
 }
 
 .header {
-    padding: 1rem 1.25rem;
+    padding: 0.75rem 1rem;
     background-color: white;
-    border-bottom: 1px solid var(--border);
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -32,8 +31,16 @@
 .summary {
     display: flex;
     gap: 0.5rem;
-    font-size: 0.9rem;
-    font-weight: 600;
+    font-size: 1.1rem;
+    font-weight: 700;
+}
+
+.summary .income {
+    color: var(--text-secondary);
+}
+
+.summary .expense {
+    color: var(--text-secondary);
 }
 
 .income {
@@ -73,7 +80,7 @@
 .list {
     display: flex;
     flex-direction: column;
-    gap: 0.75rem;
+    gap: 0.35rem;
     margin-bottom: 1.25rem;
     overflow-y: auto;
     flex-grow: 1;
@@ -96,14 +103,13 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 1rem;
-    border-bottom: 1px solid var(--border);
+    padding: 0.75rem 1rem;
 }
 
 .itemLeft {
     display: flex;
-    flex-direction: column;
-    gap: 0.25rem;
+    align-items: center;
+    gap: 0.5rem;
 }
 
 .category {

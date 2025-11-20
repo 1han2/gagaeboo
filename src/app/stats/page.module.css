@@ -30,7 +30,6 @@
     background: var(--bg-card);
     padding: 0.5rem;
     border-radius: var(--radius);
-    border: 1px solid var(--border);
 }
 
 .filterBtn {
@@ -58,7 +57,6 @@
     background: var(--bg-card);
     padding: 0.25rem;
     border-radius: var(--radius);
-    border: 1px solid var(--border);
     margin-bottom: 1.5rem;
 }
 
@@ -72,9 +70,9 @@
 }
 
 .active {
-    background: white;
-    color: var(--text-main);
-    border: 1px solid var(--border);
+    background: var(--primary);
+    color: white;
+    border: 1px solid var(--primary);
 }
 
 .totalContainer {
@@ -83,7 +81,6 @@
     padding: 1.5rem;
     background: var(--bg-main);
     border-radius: var(--radius);
-    border: 1px solid var(--border);
 }
 
 .totalLabel {

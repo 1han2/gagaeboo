@@ -37,8 +37,8 @@
   /* Amber 600 */
 
   /* Spacing & Shape */
-  --radius: 0.5rem;
-  /* Slightly sharper corners */
+  --radius: 1rem;
+  /* Increased border radius for softer look */
   --shadow-sm: none;
   /* No shadows for flat design */
   --shadow: none;
@@ -116,8 +116,6 @@ button {
 .card {
   background: var(--bg-card);
   border-radius: var(--radius);
-  border: 1px solid var(--border);
-  /* Solid border instead of shadow */
   padding: 1.5rem;
 }
 
@@ -180,8 +178,12 @@ input[type="date"] {
 
 @media (max-width: 768px) {
   input[type="date"] {
-    font-size: 0.9rem;
+    font-size: 0.85rem;
   }
+}
+
+select.input {
+  padding-right: 2.5rem;
 }
 
 .label {

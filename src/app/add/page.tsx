@@ -9,6 +9,7 @@ import Link from 'next/link';
 import styles from './page.module.css';
 import Calendar from '@/components/Calendar';
 import { format } from 'date-fns';
+import { USER_LABELS } from '@/lib/config';
 
 function AddTransactionForm() {
     const router = useRouter();
@@ -227,8 +228,8 @@ function AddTransactionForm() {
                                 className="input"
                             >
                                 <option value="함께">함께</option>
-                                <option value="남편">남편</option>
-                                <option value="아내">아내</option>
+                                <option value={USER_LABELS.person1}>{USER_LABELS.person1}</option>
+                                <option value={USER_LABELS.person2}>{USER_LABELS.person2}</option>
                             </select>
                         </div>
 

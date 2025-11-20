@@ -62,6 +62,24 @@ export default function StatsChart({ transactions, prevTransactions = [], type }
         const values = sorted.map(i => i.value);
         const prevValues = sorted.map(i => i.prevValue);
 
+        // Color palette for categories
+        const colorPalette = [
+            '#4f46e5', // Indigo
+            '#ec4899', // Pink
+            '#8b5cf6', // Violet
+            '#06b6d4', // Cyan
+            '#10b981', // Emerald
+            '#f59e0b', // Amber
+            '#ef4444', // Red
+            '#6366f1', // Indigo lighter
+            '#14b8a6', // Teal
+            '#f97316', // Orange
+            '#a855f7', // Purple
+            '#84cc16', // Lime
+        ];
+
+        const categoryColors = labels.map((_, index) => colorPalette[index % colorPalette.length]);
+
         return {
             data: {
                 labels,
@@ -69,7 +87,7 @@ export default function StatsChart({ transactions, prevTransactions = [], type }
                     {
                         label: '이번 달',
                         data: values,
-                        backgroundColor: '#4f46e5', // Indigo
+                        backgroundColor: categoryColors,
                         borderRadius: 4,
                         barThickness: 12,
                         order: 1
@@ -84,7 +102,10 @@ export default function StatsChart({ transactions, prevTransactions = [], type }
                     }
                 ],
             },
-            sortedCategories: sorted
+            sortedCategories: sorted.map((cat, index) => ({
+                ...cat,
+                color: categoryColors[index]
+            }))
         };
     }, [transactions, prevTransactions, type]);
 
@@ -163,7 +184,7 @@ export default function StatsChart({ transactions, prevTransactions = [], type }
                                 padding: '0.75rem',
                                 backgroundColor: isSelected ? '#e0e7ff' : 'var(--bg-main)',
                                 borderRadius: 'var(--radius)',
-                                border: isSelected ? '1px solid var(--primary)' : '1px solid var(--border)',
+                                border: 'none',
                                 width: '100%',
                                 cursor: 'pointer',
                                 transition: 'all 0.2s'
@@ -174,12 +195,12 @@ export default function StatsChart({ transactions, prevTransactions = [], type }
                                     width: '12px',
                                     height: '12px',
                                     borderRadius: '2px',
-                                    backgroundColor: '#4f46e5'
+                                    backgroundColor: cat.color
                                 }} />
-                                <span style={{ fontWeight: 600, fontSize: '0.9rem' }}>{cat.label}</span>
+                                <span style={{ fontWeight: 600, fontSize: '0.9rem', color: 'var(--text-main)' }}>{cat.label}</span>
                             </div>
                             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
-                                <span style={{ fontWeight: 700, fontSize: '0.95rem' }}>{cat.value.toLocaleString()}원</span>
+                                <span style={{ fontWeight: 700, fontSize: '0.95rem', color: 'var(--text-main)' }}>{cat.value.toLocaleString()}원</span>
                                 {cat.prevValue > 0 && (
                                     <span style={{ fontSize: '0.75rem', color: isIncrease ? 'var(--danger)' : 'var(--success)', fontWeight: 500 }}>
                                         {isIncrease ? '▲' : '▼'} {Math.abs(diff).toLocaleString()}원
