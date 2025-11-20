@@ -1,0 +1,163 @@
+.container {
+    background: var(--bg-card);
+    border-radius: var(--radius);
+    padding: 1.25rem;
+    border: 1px solid var(--border);
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.header {
+    padding: 1rem 1.25rem;
+    background-color: white;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.headerLeft {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.dateTitle {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--text-main);
+}
+
+.summary {
+    display: flex;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.income {
+    color: var(--success);
+}
+
+.expense {
+    color: var(--text-main);
+}
+
+.addBtnHeader {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background-color: var(--bg-main);
+    color: var(--primary);
+    transition: background-color 0.2s;
+    flex-shrink: 0;
+}
+
+.addBtnHeader:hover {
+    background-color: #e0e7ff;
+}
+
+.empty {
+    text-align: center;
+    color: var(--text-muted);
+    padding: 2rem;
+    font-size: 0.9rem;
+    background: var(--bg-main);
+    border-radius: var(--radius);
+}
+
+.list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-bottom: 1.25rem;
+    overflow-y: auto;
+    flex-grow: 1;
+    padding-right: 0.5rem;
+    /* Space for scrollbar */
+}
+
+.itemLink {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+    transition: background-color 0.2s;
+}
+
+.itemLink:hover {
+    background-color: var(--bg-main);
+}
+
+.item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    border-bottom: 1px solid var(--border);
+}
+
+.itemLeft {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.category {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    background-color: var(--bg-main);
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    align-self: flex-start;
+}
+
+.merchant {
+    font-weight: 600;
+    color: var(--text-main);
+}
+
+.itemRight {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.25rem;
+}
+
+.income {
+    color: var(--success);
+    font-weight: 700;
+}
+
+.expense {
+    color: var(--text-main);
+    font-weight: 700;
+}
+
+.consumer {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+}
+
+.addBtn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    width: 100%;
+    padding: 1rem;
+    border-radius: var(--radius);
+    background-color: var(--bg-main);
+    color: var(--primary);
+    font-weight: 600;
+    transition: all 0.2s;
+    border: 2px dashed var(--border);
+}
+
+.addBtn:hover {
+    background-color: #e0e7ff;
+    border-color: var(--primary);
+}
