@@ -92,7 +92,7 @@ export default function StatsChart({ transactions, prevTransactions = [], type }
                         backgroundColor: categoryColors,
                         borderRadius: 4,
                         barThickness: 12,
-                        order: 1
+                        order: 2
                     },
                     ...(hasPrevData ? [{
                         label: '지난 달',
@@ -100,7 +100,7 @@ export default function StatsChart({ transactions, prevTransactions = [], type }
                         backgroundColor: '#cbd5e1', // Slate 300
                         borderRadius: 4,
                         barThickness: 12,
-                        order: 2
+                        order: 1
                     }] : [])
                 ],
             },
