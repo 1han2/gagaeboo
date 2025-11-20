@@ -80,6 +80,8 @@ export default function StatsChart({ transactions, prevTransactions = [], type }
 
         const categoryColors = labels.map((_, index) => colorPalette[index % colorPalette.length]);
 
+        const hasPrevData = prevValues.some(value => value > 0);
+
         return {
             data: {
                 labels,
@@ -92,14 +94,14 @@ export default function StatsChart({ transactions, prevTransactions = [], type }
                         barThickness: 12,
                         order: 1
                     },
-                    {
+                    ...(hasPrevData ? [{
                         label: '지난 달',
                         data: prevValues,
                         backgroundColor: '#cbd5e1', // Slate 300
                         borderRadius: 4,
                         barThickness: 12,
                         order: 2
-                    }
+                    }] : [])
                 ],
             },
             sortedCategories: sorted.map((cat, index) => ({
