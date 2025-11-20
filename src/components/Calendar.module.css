@@ -94,7 +94,8 @@
 }
 
 .today {
-    border: 2px solid var(--text-main);
+    background-color: rgba(79, 70, 229, 0.15);
+    border-color: transparent;
     font-weight: 700;
 }
 
