@@ -173,6 +173,17 @@ button {
   border-color: var(--primary);
 }
 
+input[type="date"] {
+  max-width: 100%;
+  font-size: 1rem;
+}
+
+@media (max-width: 768px) {
+  input[type="date"] {
+    font-size: 0.9rem;
+  }
+}
+
 .label {
   display: block;
   font-size: 0.875rem;
