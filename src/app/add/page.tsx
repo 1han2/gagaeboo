@@ -175,49 +175,51 @@ function AddTransactionForm() {
                             </div>
                         </div>
 
-                        <div className={styles.formGroup}>
-                            <label className="label">카테고리</label>
-                            <div className={styles.categoryGrid}>
-                                {[
-                                    { name: '식비', icon: '🍚' },
-                                    { name: '카페', icon: '☕' },
-                                    { name: '외식', icon: '🍽️' },
-                                    { name: '교통', icon: '🚌' },
-                                    { name: '쇼핑', icon: '🛍️' },
-                                    { name: '생활', icon: '🏠' },
-                                    { name: '주거/통신', icon: '📱' },
-                                    { name: '의료/건강', icon: '💊' },
-                                    { name: '미용', icon: '💇' },
-                                    { name: '금융', icon: '💰' },
-                                    { name: '문화/여가', icon: '🎬' },
-                                    { name: '교육/학습', icon: '📚' },
-                                    { name: '자녀/육아', icon: '👶' },
-                                    { name: '반려동물', icon: '🐾' },
-                                    { name: '경조사/선물', icon: '🎁' },
-                                    { name: '기타', icon: '🎸' },
-                                ].map((cat) => (
-                                    <button
-                                        key={cat.name}
-                                        type="button"
-                                        onClick={() => setFormData(prev => ({ ...prev, category: cat.name }))}
-                                        className={`${styles.categoryBtn} ${formData.category === cat.name ? styles.activeCategory : ''}`}
-                                    >
-                                        <span className={styles.catIcon}>{cat.icon}</span>
-                                        <span className={styles.catName}>{cat.name}</span>
-                                    </button>
-                                ))}
+                        {formData.type === 'expense' && (
+                            <div className={styles.formGroup}>
+                                <label className="label">카테고리</label>
+                                <div className={styles.categoryGrid}>
+                                    {[
+                                        { name: '식비', icon: '🍚' },
+                                        { name: '카페', icon: '☕' },
+                                        { name: '외식', icon: '🍽️' },
+                                        { name: '교통', icon: '🚌' },
+                                        { name: '쇼핑', icon: '🛍️' },
+                                        { name: '생활', icon: '🏠' },
+                                        { name: '주거/통신', icon: '📱' },
+                                        { name: '의료/건강', icon: '💊' },
+                                        { name: '미용', icon: '💇' },
+                                        { name: '금융', icon: '💰' },
+                                        { name: '문화/여가', icon: '🎬' },
+                                        { name: '교육/학습', icon: '📚' },
+                                        { name: '자녀/육아', icon: '👶' },
+                                        { name: '반려동물', icon: '🐾' },
+                                        { name: '경조사/선물', icon: '🎁' },
+                                        { name: '기타', icon: '🎸' },
+                                    ].map((cat) => (
+                                        <button
+                                            key={cat.name}
+                                            type="button"
+                                            onClick={() => setFormData(prev => ({ ...prev, category: cat.name }))}
+                                            className={`${styles.categoryBtn} ${formData.category === cat.name ? styles.activeCategory : ''}`}
+                                        >
+                                            <span className={styles.catIcon}>{cat.icon}</span>
+                                            <span className={styles.catName}>{cat.name}</span>
+                                        </button>
+                                    ))}
+                                </div>
                             </div>
-                        </div>
+                        )}
 
                         <div className={styles.formGroup}>
-                            <label className="label">사용처</label>
+                            <label className="label">{formData.type === 'income' ? '수입처' : '사용처'}</label>
                             <input
                                 type="text"
                                 name="merchant"
                                 value={formData.merchant}
                                 onChange={handleChange}
                                 className="input"
-                                placeholder="예: 스타벅스"
+                                placeholder={formData.type === 'income' ? '예: 월급' : '예: 스타벅스'}
                                 required
                             />
                         </div>
