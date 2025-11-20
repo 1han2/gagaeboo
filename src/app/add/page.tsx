@@ -253,7 +253,7 @@ function AddTransactionForm() {
                                     className={`btn ${styles.deleteBtn}`}
                                     disabled={loading}
                                 >
-                                    삭제하기
+                                    삭제
                                 </button>
                             )}
                             <button
@@ -262,7 +262,7 @@ function AddTransactionForm() {
                                 style={{ flex: idParam ? 2 : 1 }}
                                 disabled={loading}
                             >
-                                {loading ? '저장 중...' : (idParam ? '수정하기' : '저장하기')}
+                                {loading ? '저장 중...' : (idParam ? '수정' : '저장')}
                             </button>
                         </div>
                     </form>
