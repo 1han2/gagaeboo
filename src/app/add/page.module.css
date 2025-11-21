@@ -129,10 +129,10 @@
     appearance: none;
     /* Remove default iOS styling */
     -webkit-appearance: none;
-    display: flex;
-    align-items: center;
     box-sizing: border-box;
     /* Ensure padding doesn't affect width */
+    line-height: 1.3;
+    /* Ensure consistent line height */
 }
 
 .input:focus {
@@ -142,8 +142,8 @@
 
 /* Specific fix for date input on iOS */
 input[type="date"].input {
-    min-height: 3rem;
-    line-height: 1.5;
+    height: 3rem;
+    /* Enforce fixed height */
     display: block;
     /* Ensure it behaves like a block for height */
 }
@@ -155,6 +155,8 @@ select.input {
     background-position: right 1rem center;
     background-size: 1em;
     padding-right: 2.5rem;
+    height: 3rem;
+    /* Enforce fixed height */
 }
 
 /* Category Grid */
