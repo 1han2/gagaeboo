@@ -62,6 +62,8 @@
 .formRow .formGroup {
     flex: 1;
     margin-bottom: 0;
+    min-width: 0;
+    /* Fix for flex item overflow */
 }
 
 .typeToggle {
@@ -129,6 +131,8 @@
     -webkit-appearance: none;
     display: flex;
     align-items: center;
+    box-sizing: border-box;
+    /* Ensure padding doesn't affect width */
 }
 
 .input:focus {

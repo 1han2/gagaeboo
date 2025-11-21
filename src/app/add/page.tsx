@@ -38,33 +38,12 @@ function AddTransactionForm() {
     });
     const [showAnimation, setShowAnimation] = useState(false);
     const [animationType, setAnimationType] = useState<AnimationType>('highFive');
+    const [isSaveComplete, setIsSaveComplete] = useState(false);
+    const [isAnimationComplete, setIsAnimationComplete] = useState(false);
 
     useEffect(() => {
         if (idParam) {
             const loadTransaction = async () => {
-                // We need to fetch the transaction details.
-                // Since we don't have a direct "getById" API exposed to client easily without fetching all,
-                // we will fetch the month's transactions and find it.
-                // Ideally, we should have a getTransactionById server action, but for now:
-                // We can assume the date is not known, so we might need to search or pass date in query too.
-                // If date is passed in query with ID, it helps.
-                // If not, we might need to fetch a range or rely on the user coming from a view that has the data.
-                // Let's assume we pass date query param even for edit if possible, or we just fetch current month.
-                // Actually, let's add getTransactionById to dataService/actions if needed, 
-                // but for simplicity, let's try to find it in the current month or the month of the transaction if provided.
-
-                // Better approach: Pass the transaction object via state? No, URL is better for sharing/refresh.
-                // Let's implement a simple getTransactionById in actions.ts or just fetch all for the month if we know the date.
-                // If we don't know the date, searching might be expensive in Sheets.
-                // Let's require 'date' param for edit as well, or at least try to fetch.
-
-                // For now, let's assume we can fetch the transaction. 
-                // We will add a getTransaction server action.
-
-                // Wait, I can't easily add getTransaction right now without changing multiple files.
-                // Let's use the existing getTransactions and filter. 
-                // We'll assume the transaction is within the last few months or we need the date param.
-
                 if (dateParam) {
                     const transactions = await getTransactions(dateParam.substring(0, 7));
                     const found = transactions.find(t => t.id === idParam);
@@ -85,9 +64,23 @@ function AddTransactionForm() {
         }
     }, [idParam, dateParam]);
 
+    useEffect(() => {
+        if (isSaveComplete && isAnimationComplete) {
+            router.replace(`/?date=${formData.date}`, { scroll: false });
+            router.refresh();
+        }
+    }, [isSaveComplete, isAnimationComplete, formData.date, router]);
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
+        setIsSaveComplete(false);
+        setIsAnimationComplete(false);
+
+        // Trigger animation IMMEDIATELY
+        const type: AnimationType = Math.random() > 0.5 ? 'highFive' : 'money';
+        setAnimationType(type);
+        setShowAnimation(true);
 
         const transactionData: Transaction = {
             id: idParam || crypto.randomUUID(),
@@ -100,21 +93,23 @@ function AddTransactionForm() {
             memo: formData.memo
         };
 
-        if (idParam) {
-            await updateTransaction(transactionData);
-        } else {
-            await addTransaction(transactionData);
+        try {
+            if (idParam) {
+                await updateTransaction(transactionData);
+            } else {
+                await addTransaction(transactionData);
+            }
+            setIsSaveComplete(true);
+        } catch (error) {
+            console.error('Error saving transaction:', error);
+            alert('저장 중 오류가 발생했습니다.');
+            setShowAnimation(false); // Stop animation on error
+            setLoading(false);
         }
-
-        // Trigger animation
-        const type: AnimationType = Math.random() > 0.5 ? 'highFive' : 'money';
-        setAnimationType(type);
-        setShowAnimation(true);
     };
 
     const handleAnimationComplete = () => {
-        router.replace(`/?date=${formData.date}`, { scroll: false });
-        router.refresh();
+        setIsAnimationComplete(true);
     };
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
