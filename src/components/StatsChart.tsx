@@ -34,6 +34,7 @@ interface StatsChartProps {
 
 export default function StatsChart({ transactions, prevTransactions = [], type }: StatsChartProps) {
     const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+    const [sortBy, setSortBy] = useState<'date' | 'amount'>('date');
 
     const { data, sortedCategories } = useMemo(() => {
         // Current Month Data
@@ -98,6 +99,12 @@ export default function StatsChart({ transactions, prevTransactions = [], type }
 
     const hasData = useMemo(() => {
         return transactions.some(t => t.type === type);
+    }, [transactions, type]);
+
+    const totalAmount = useMemo(() => {
+        return transactions
+            .filter(t => t.type === type)
+            .reduce((sum, t) => sum + t.amount, 0);
     }, [transactions, type]);
 
     if (!hasData) {
@@ -179,6 +186,7 @@ export default function StatsChart({ transactions, prevTransactions = [], type }
                 {sortedCategories.map((cat) => {
                     const diff = cat.value - cat.prevValue;
                     const isIncrease = diff > 0;
+                    const percentChange = cat.prevValue > 0 ? ((diff / cat.prevValue) * 100).toFixed(1) : null;
                     const isSelected = selectedCategory === cat.label;
 
                     return (
@@ -188,7 +196,7 @@ export default function StatsChart({ transactions, prevTransactions = [], type }
                             style={{
                                 display: 'flex',
                                 justifyContent: 'space-between',
-                                alignItems: 'center',
+                                alignItems: 'flex-start',
                                 padding: '1rem',
                                 backgroundColor: isSelected ? '#e0e7ff' : 'var(--bg-main)',
                                 borderRadius: 'var(--radius)',
@@ -198,20 +206,23 @@ export default function StatsChart({ transactions, prevTransactions = [], type }
                                 transition: 'all 0.2s'
                             }}
                         >
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                                <div style={{
-                                    width: '12px',
-                                    height: '12px',
-                                    borderRadius: '2px',
-                                    backgroundColor: cat.color
-                                }} />
-                                <span style={{ fontWeight: 600, fontSize: '0.9rem', color: 'var(--text-main)' }}>{cat.label}</span>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem', flex: 1 }}>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                                    <div style={{
+                                        width: '12px',
+                                        height: '12px',
+                                        borderRadius: '2px',
+                                        backgroundColor: cat.color
+                                    }} />
+                                    <span style={{ fontWeight: 600, fontSize: '0.9rem', color: 'var(--text-main)' }}>{cat.label}</span>
+                                </div>
+                                <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 500, display: 'block', textAlign: 'left' }}>지출 중 {((cat.value / totalAmount) * 100).toFixed(1)}%</span>
                             </div>
                             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
                                 <span style={{ fontWeight: 700, fontSize: '0.95rem', color: 'var(--text-main)' }}>{cat.value.toLocaleString()}원</span>
                                 {cat.prevValue > 0 && (
                                     <span style={{ fontSize: '0.75rem', color: isIncrease ? 'var(--danger)' : 'var(--success)', fontWeight: 500 }}>
-                                        {isIncrease ? '▲' : '▼'} {Math.abs(diff).toLocaleString()}원
+                                        {isIncrease ? '▲' : '▼'} {Math.abs(diff).toLocaleString()}원 {percentChange && `(${Math.abs(Number(percentChange))}%)`}
                                     </span>
                                 )}
                             </div>
@@ -250,41 +261,82 @@ export default function StatsChart({ transactions, prevTransactions = [], type }
                             animation: 'slideUp 0.3s ease-out'
                         }}>
                             <div style={{
-                                padding: '1rem',
-                                display: 'flex',
-                                justifyContent: 'space-between',
-                                alignItems: 'center'
+                                padding: '1rem'
                             }}>
-                                <h3 style={{ fontSize: '1.1rem', fontWeight: 700 }}>{selectedCategory} 상세 내역</h3>
-                                <button
-                                    onClick={() => setSelectedCategory(null)}
-                                    style={{ padding: '0.5rem', fontSize: '1.5rem', lineHeight: 0.5 }}
-                                >
-                                    ×
-                                </button>
+                                <div style={{
+                                    display: 'flex',
+                                    justifyContent: 'space-between',
+                                    alignItems: 'center',
+                                    marginBottom: '0.75rem'
+                                }}>
+                                    <h3 style={{ fontSize: '1.1rem', fontWeight: 700 }}>{selectedCategory} 상세 내역</h3>
+                                    <button
+                                        onClick={() => setSelectedCategory(null)}
+                                        style={{ padding: '0.5rem', fontSize: '1.5rem', lineHeight: 0.5 }}
+                                    >
+                                        ×
+                                    </button>
+                                </div>
+                                <div style={{ display: 'flex', gap: '0.5rem' }}>
+                                    <button
+                                        onClick={() => setSortBy('date')}
+                                        style={{
+                                            padding: '0.5rem 1rem',
+                                            borderRadius: 'var(--radius)',
+                                            fontSize: '0.85rem',
+                                            fontWeight: 600,
+                                            backgroundColor: sortBy === 'date' ? 'var(--primary)' : 'var(--bg-main)',
+                                            color: sortBy === 'date' ? 'white' : 'var(--text-secondary)',
+                                            transition: 'all 0.2s'
+                                        }}
+                                    >
+                                        시간순
+                                    </button>
+                                    <button
+                                        onClick={() => setSortBy('amount')}
+                                        style={{
+                                            padding: '0.5rem 1rem',
+                                            borderRadius: 'var(--radius)',
+                                            fontSize: '0.85rem',
+                                            fontWeight: 600,
+                                            backgroundColor: sortBy === 'amount' ? 'var(--primary)' : 'var(--bg-main)',
+                                            color: sortBy === 'amount' ? 'white' : 'var(--text-secondary)',
+                                            transition: 'all 0.2s'
+                                        }}
+                                    >
+                                        금액순
+                                    </button>
+                                </div>
                             </div>
                             <div style={{ overflowY: 'auto', padding: '1rem', paddingBottom: '6rem', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-                                {getCategoryTransactions(selectedCategory).map(t => (
-                                    <Link key={t.id} href={`/add?id=${t.id}&date=${t.date}`} style={{ textDecoration: 'none', color: 'inherit' }}>
-                                        <div style={{
-                                            display: 'flex',
-                                            justifyContent: 'space-between',
-                                            alignItems: 'center',
-                                            padding: '0.5rem 0.75rem',
-                                            backgroundColor: 'var(--bg-main)',
-                                            borderRadius: 'var(--radius)'
-                                        }}>
-                                            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.1rem' }}>
-                                                <span style={{ fontWeight: 600, color: 'var(--text-main)', fontSize: '0.9rem' }}>{t.merchant}</span>
-                                                <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>{t.date}</span>
+                                {getCategoryTransactions(selectedCategory)
+                                    .sort((a, b) => {
+                                        if (sortBy === 'date') {
+                                            return new Date(b.date).getTime() - new Date(a.date).getTime();
+                                        } else {
+                                            return b.amount - a.amount;
+                                        }
+                                    })
+                                    .map(t => (
+                                        <Link key={t.id} href={`/add?id=${t.id}&date=${t.date}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+                                            <div style={{
+                                                display: 'flex',
+                                                justifyContent: 'space-between',
+                                                alignItems: 'center',
+                                                padding: '0.5rem 0.75rem',
+                                                borderRadius: 'var(--radius)'
+                                            }}>
+                                                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.1rem' }}>
+                                                    <span style={{ fontWeight: 600, color: 'var(--text-main)', fontSize: '0.9rem' }}>{t.merchant}</span>
+                                                    <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>{t.date}</span>
+                                                </div>
+                                                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '0.1rem' }}>
+                                                    <span style={{ fontWeight: 700, fontSize: '0.9rem' }}>{t.amount.toLocaleString()}원</span>
+                                                    <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{t.consumer}</span>
+                                                </div>
                                             </div>
-                                            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '0.1rem' }}>
-                                                <span style={{ fontWeight: 700, fontSize: '0.9rem' }}>{t.amount.toLocaleString()}원</span>
-                                                <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{t.consumer}</span>
-                                            </div>
-                                        </div>
-                                    </Link>
-                                ))}
+                                        </Link>
+                                    ))}
                                 {getCategoryTransactions(selectedCategory).length === 0 && (
                                     <div style={{ textAlign: 'center', color: 'var(--text-muted)', padding: '2rem' }}>
                                         내역이 없습니다.

@@ -26,10 +26,9 @@
     display: flex;
     justify-content: center;
     gap: 0.5rem;
-    margin-bottom: 1rem;
-    background: var(--bg-card);
-    padding: 0.5rem;
-    border-radius: var(--radius);
+    margin-bottom: 2rem;
+    background: transparent;
+    padding: 0;
 }
 
 .filterBtn {
@@ -38,6 +37,7 @@
     font-size: 0.9rem;
     font-weight: 500;
     color: var(--text-secondary);
+    background-color: var(--bg-main);
     transition: all 0.2s;
 }
 

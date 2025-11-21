@@ -84,20 +84,23 @@ export default function StatsPage() {
                     </button>
                 </div>
 
-                <div className={styles.filterContainer}>
-                    {['전체', '함께', USER_LABELS.person1, USER_LABELS.person2].map(consumer => (
-                        <button
-                            key={consumer}
-                            className={`${styles.filterBtn} ${selectedConsumer === consumer ? styles.activeFilter : ''}`}
-                            onClick={() => setSelectedConsumer(consumer)}
-                        >
-                            {consumer}
-                        </button>
-                    ))}
-                </div>
+
             </div>
 
             <div style={{ backgroundColor: 'white', width: '100%', padding: '1.5rem 1rem', minHeight: '50vh' }}>
+                <div className="container" style={{ paddingBottom: 0 }}>
+                    <div className={styles.filterContainer}>
+                        {['전체', '함께', USER_LABELS.person1, USER_LABELS.person2].map(consumer => (
+                            <button
+                                key={consumer}
+                                className={`${styles.filterBtn} ${selectedConsumer === consumer ? styles.activeFilter : ''}`}
+                                onClick={() => setSelectedConsumer(consumer)}
+                            >
+                                {consumer}
+                            </button>
+                        ))}
+                    </div>
+                </div>
                 {loading ? (
                     <div className="container" style={{ display: 'flex', flexDirection: 'column', gap: '1rem', paddingBottom: 0 }}>
                         <Skeleton style={{ width: '40%', height: '18px' }} />
