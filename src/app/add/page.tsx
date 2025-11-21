@@ -83,19 +83,20 @@ function AddTransactionForm() {
             setShowAnimation(true);
         }
 
-        // Defer save slightly to ensure animation starts rendering first
-        setTimeout(async () => {
-            const transactionData: Transaction = {
-                id: idParam || crypto.randomUUID(),
-                date: formData.date,
-                amount: Number(formData.amount),
-                category: formData.category,
-                merchant: formData.merchant,
-                consumer: formData.consumer,
-                type: formData.type,
-                memo: formData.memo
-            };
+        // Start save operation CONCURRENTLY (no await, runs in parallel with animation)
+        const transactionData: Transaction = {
+            id: idParam || crypto.randomUUID(),
+            date: formData.date,
+            amount: Number(formData.amount),
+            category: formData.category,
+            merchant: formData.merchant,
+            consumer: formData.consumer,
+            type: formData.type,
+            memo: formData.memo
+        };
 
+        // Fire and forget - runs concurrently with animation
+        (async () => {
             try {
                 if (idParam) {
                     await updateTransaction(transactionData);
@@ -109,7 +110,7 @@ function AddTransactionForm() {
                 setShowAnimation(false); // Stop animation on error
                 setLoading(false);
             }
-        }, 100);
+        })();
     };
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
