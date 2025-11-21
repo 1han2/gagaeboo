@@ -95,7 +95,7 @@ export default function Calendar({ transactions, onDateSelect, selectedDate, cur
                 <button onClick={() => handleMonthNav('prev')} className={styles.navBtn}>
                     <ChevronLeft size={20} />
                 </button>
-                <button onClick={handlePickerOpen} className={styles.monthTitle} style={{ fontSize: '1.2rem', fontWeight: '700', cursor: 'pointer', background: 'none', border: 'none', padding: 0 }}>
+                <button onClick={handlePickerOpen} className={styles.monthTitle} style={{ fontSize: '1.2rem', color: 'black', fontWeight: '700', cursor: 'pointer', background: 'none', border: 'none', padding: 0 }}>
                     {format(currentMonth, 'yyyy년 M월')}
                 </button>
                 <button onClick={() => handleMonthNav('next')} className={styles.navBtn}>
