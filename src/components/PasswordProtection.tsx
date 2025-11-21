@@ -76,7 +76,7 @@ export default function PasswordProtection({ children }: { children: React.React
                         onChange={(e) => setPassword(e.target.value)}
                         placeholder="비밀번호를 입력하세요"
                         className="input"
-                        style={{ textAlign: 'center', letterSpacing: '0.5rem', fontSize: '1.2rem' }}
+                        style={{ textAlign: 'center', letterSpacing: '0.1rem', fontSize: '1.2rem' }}
                         autoFocus
                         inputMode="numeric"
                         pattern="[0-9]*"

@@ -207,7 +207,7 @@ export default function StatsChart({ transactions, prevTransactions = [], type }
                             }}
                         >
                             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem', flex: 1 }}>
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                                     <div style={{
                                         width: '12px',
                                         height: '12px',
@@ -216,7 +216,7 @@ export default function StatsChart({ transactions, prevTransactions = [], type }
                                     }} />
                                     <span style={{ fontWeight: 600, fontSize: '0.9rem', color: 'var(--text-main)' }}>{cat.label}</span>
                                 </div>
-                                <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 500, display: 'block', textAlign: 'left' }}>지출 중 {((cat.value / totalAmount) * 100).toFixed(1)}%</span>
+                                <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 500, display: 'block', textAlign: 'left', letterSpacing: '-0.02em' }}>지출 중 {((cat.value / totalAmount) * 100).toFixed(1)}%</span>
                             </div>
                             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
                                 <span style={{ fontWeight: 700, fontSize: '0.95rem', color: 'var(--text-main)' }}>{cat.value.toLocaleString()}원</span>
