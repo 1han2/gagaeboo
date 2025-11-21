@@ -35,6 +35,18 @@
     height: 200px;
 }
 
+.message {
+    margin-top: 2rem;
+    font-size: 2.5rem;
+    font-weight: 900;
+    color: var(--text-main);
+    animation: slideUp 0.5s ease-out 0.5s forwards;
+    opacity: 0;
+    transform: translateY(20px);
+    text-align: center;
+    white-space: nowrap;
+}
+
 .bounceEmoji {
     font-size: 8rem;
     animation: bounce 1s cubic-bezier(0.28, 0.84, 0.42, 1) forwards;
