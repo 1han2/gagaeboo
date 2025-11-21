@@ -15,7 +15,7 @@ export const ANIMATION_VARIANTS = [
     { emoji: '🚀', message: '가보자고!', style: 'burst' },
     { emoji: '💖', message: '사랑해!', style: 'rain' },
     { emoji: '💎', message: '알뜰살뜰!', style: 'fountain' },
-    { emoji: '🌈', message: '무지개빛!', style: 'rain' },
+    { emoji: '🌈', message: '수고했어요!', style: 'rain' },
 ] as const;
 
 interface SuccessAnimationProps {

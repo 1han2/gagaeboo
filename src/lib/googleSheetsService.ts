@@ -20,15 +20,67 @@ const sheets = google.sheets({ version: 'v4', auth });
 
 import { unstable_cache } from 'next/cache';
 
-const getAllTransactions = unstable_cache(
-    async (): Promise<Transaction[]> => {
+// Helper to get the last updated timestamp
+const getLastUpdated = async (): Promise<string> => {
+    if (!SPREADSHEET_ID || !GOOGLE_CLIENT_EMAIL || !GOOGLE_PRIVATE_KEY) return 'initial';
+    try {
+        const response = await sheets.spreadsheets.values.get({
+            spreadsheetId: SPREADSHEET_ID,
+            range: 'Metadata!A1',
+        });
+        return response.data.values?.[0]?.[0] || 'initial';
+    } catch (error) {
+        return 'initial';
+    }
+};
+
+// Helper to update the timestamp
+const updateLastUpdated = async (): Promise<void> => {
+    if (!SPREADSHEET_ID || !GOOGLE_CLIENT_EMAIL || !GOOGLE_PRIVATE_KEY) return;
+    const timestamp = new Date().toISOString();
+    try {
+        await sheets.spreadsheets.values.update({
+            spreadsheetId: SPREADSHEET_ID,
+            range: 'Metadata!A1',
+            valueInputOption: 'USER_ENTERED',
+            requestBody: { values: [[timestamp]] },
+        });
+    } catch (error) {
+        // If update fails (likely sheet doesn't exist), try creating it
+        try {
+            await sheets.spreadsheets.batchUpdate({
+                spreadsheetId: SPREADSHEET_ID,
+                requestBody: {
+                    requests: [{
+                        addSheet: {
+                            properties: { title: 'Metadata', gridProperties: { rowCount: 1, columnCount: 1 }, hidden: true }
+                        }
+                    }]
+                }
+            });
+            // Retry update
+            await sheets.spreadsheets.values.update({
+                spreadsheetId: SPREADSHEET_ID,
+                range: 'Metadata!A1',
+                valueInputOption: 'USER_ENTERED',
+                requestBody: { values: [[timestamp]] },
+            });
+        } catch (createError) {
+            console.error('Failed to update metadata:', createError);
+        }
+    }
+};
+
+// The actual data fetching function, cached based on version
+const _fetchTransactionsData = unstable_cache(
+    async (version: string): Promise<Transaction[]> => {
         if (!SPREADSHEET_ID || !GOOGLE_CLIENT_EMAIL || !GOOGLE_PRIVATE_KEY) {
             console.warn('Google Sheets credentials missing');
             return [];
         }
 
         try {
-            console.log('Fetching all transactions from Google Sheets...');
+            console.log(`Fetching transactions from Google Sheets (Version: ${version})...`);
             const response = await sheets.spreadsheets.values.get({
                 spreadsheetId: SPREADSHEET_ID,
                 range: 'Transactions!A2:H',
@@ -40,7 +92,6 @@ const getAllTransactions = unstable_cache(
             }
 
             // Map rows to Transaction objects
-            // Columns: ID, Date, Amount, Category, Merchant, Consumer, Type, Memo
             return rows.map((row) => ({
                 id: row[0],
                 date: row[1],
@@ -56,12 +107,16 @@ const getAllTransactions = unstable_cache(
             return [];
         }
     },
-    ['transactions'],
+    ['transactions-data'],
     { tags: ['transactions'], revalidate: 3600 }
 );
 
 export const getSheetTransactions = async (month?: string): Promise<Transaction[]> => {
-    const transactions = await getAllTransactions();
+    // 1. Check the latest version from the sheet (uncached)
+    const version = await getLastUpdated();
+
+    // 2. Fetch data using the version key (cached)
+    const transactions = await _fetchTransactionsData(version);
 
     if (month) {
         return transactions.filter(t => t.date.startsWith(month));
@@ -97,6 +152,9 @@ export const addSheetTransaction = async (transaction: Transaction): Promise<voi
                 values,
             },
         });
+
+        // Update version
+        await updateLastUpdated();
     } catch (error) {
         console.error('Error adding to Google Sheets:', error);
         throw error;
@@ -143,6 +201,9 @@ export const updateSheetTransaction = async (transaction: Transaction): Promise<
             requestBody: { values },
         });
 
+        // Update version
+        await updateLastUpdated();
+
     } catch (error) {
         console.error('Error updating Google Sheet:', error);
         throw error;
@@ -186,6 +247,9 @@ export const deleteSheetTransaction = async (id: string): Promise<void> => {
                 ]
             }
         });
+
+        // Update version
+        await updateLastUpdated();
 
     } catch (error) {
         console.error('Error deleting from Google Sheet:', error);
