@@ -27,6 +27,7 @@ function AddTransactionForm() {
     const dateParam = searchParams.get('date');
 
     const [loading, setLoading] = useState(false);
+    const [isDeleting, setIsDeleting] = useState(false);
     const [formData, setFormData] = useState({
         date: dateParam || new Date().toISOString().split('T')[0],
         amount: '',
@@ -39,7 +40,6 @@ function AddTransactionForm() {
     const [showAnimation, setShowAnimation] = useState(false);
     const [animationVariantIndex, setAnimationVariantIndex] = useState(0);
     const [isSaveComplete, setIsSaveComplete] = useState(false);
-    const [isAnimationComplete, setIsAnimationComplete] = useState(false);
 
     useEffect(() => {
         if (idParam) {
@@ -65,17 +65,16 @@ function AddTransactionForm() {
     }, [idParam, dateParam]);
 
     useEffect(() => {
-        if (isSaveComplete && isAnimationComplete) {
+        if (isSaveComplete) {
             router.replace(`/?date=${formData.date}`, { scroll: false });
             router.refresh();
         }
-    }, [isSaveComplete, isAnimationComplete, formData.date, router]);
+    }, [isSaveComplete, formData.date, router]);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
         setIsSaveComplete(false);
-        setIsAnimationComplete(false);
 
         // Trigger animation IMMEDIATELY (only for new transactions)
         if (!idParam) {
@@ -84,7 +83,7 @@ function AddTransactionForm() {
             setShowAnimation(true);
         }
 
-        // Defer save to ensure animation starts rendering first
+        // Defer save slightly to ensure animation starts rendering first
         setTimeout(async () => {
             const transactionData: Transaction = {
                 id: idParam || crypto.randomUUID(),
@@ -100,9 +99,6 @@ function AddTransactionForm() {
             try {
                 if (idParam) {
                     await updateTransaction(transactionData);
-                    // For edits, redirect immediately as there's no animation
-                    router.replace(`/?date=${formData.date}`, { scroll: false });
-                    router.refresh();
                 } else {
                     await addTransaction(transactionData);
                 }
@@ -116,10 +112,6 @@ function AddTransactionForm() {
         }, 100);
     };
 
-    const handleAnimationComplete = () => {
-        setIsAnimationComplete(true);
-    };
-
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
         setFormData(prev => ({ ...prev, [name]: value }));
@@ -130,7 +122,6 @@ function AddTransactionForm() {
             {showAnimation && (
                 <SuccessAnimation
                     variantIndex={animationVariantIndex}
-                    onComplete={handleAnimationComplete}
                 />
             )}
             <div className={styles.header}>
@@ -143,6 +134,7 @@ function AddTransactionForm() {
                         onClick={async () => {
                             if (confirm('정말 삭제하시겠습니까?')) {
                                 setLoading(true);
+                                setIsDeleting(true);
                                 await deleteTransaction(idParam);
                                 router.back();
                                 router.refresh();
@@ -270,15 +262,14 @@ function AddTransactionForm() {
 
                         </form>
                     </div>
-                    <div className={styles.floatingButtonContainer}>
+                    <div className={styles.floatingBtnContainer}>
                         <button
                             type="submit"
                             form="transaction-form"
-                            className="btn btn-primary"
-                            style={{ width: '100%', padding: '1rem', fontSize: '1.1rem' }}
+                            className={styles.submitBtn}
                             disabled={loading}
                         >
-                            {loading ? '저장 중...' : (idParam ? '수정' : '추가')}
+                            {loading ? (isDeleting ? '삭제 중...' : '저장 중...') : (idParam ? '수정하기' : '저장하기')}
                         </button>
                     </div>
                 </div>
@@ -286,5 +277,3 @@ function AddTransactionForm() {
         </main>
     );
 }
-
-
