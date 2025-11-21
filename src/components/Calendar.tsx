@@ -1,7 +1,7 @@
 'use client';
 
 
-import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameDay, addMonths, subMonths, getDay } from 'date-fns';
+import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameDay, addMonths, subMonths, getDay, isSameMonth } from 'date-fns';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import styles from './Calendar.module.css';
 import { Transaction } from '@/lib/types';
@@ -37,22 +37,34 @@ export default function Calendar({ transactions, onDateSelect, selectedDate, cur
         return { income, expense };
     };
 
+    const handleMonthNav = (direction: 'prev' | 'next') => {
+        const newMonth = direction === 'prev'
+            ? subMonths(currentMonth, 1)
+            : addMonths(currentMonth, 1);
+
+        const startOfNewMonth = startOfMonth(newMonth);
+        onMonthChange(startOfNewMonth);
+
+        const today = new Date();
+        // Explicitly check if the new month is the current month (Today's month)
+        const isCurrentMonth = startOfNewMonth.getMonth() === today.getMonth() &&
+            startOfNewMonth.getFullYear() === today.getFullYear();
+
+        if (isCurrentMonth) {
+            onDateSelect(today);
+        } else {
+            onDateSelect(startOfNewMonth);
+        }
+    };
+
     return (
         <div className={styles.calendarContainer}>
             <div className={styles.header}>
-                <button onClick={() => {
-                    const newDate = startOfMonth(subMonths(currentMonth, 1));
-                    onMonthChange(newDate);
-                    onDateSelect(newDate);
-                }} className={styles.navBtn}>
+                <button onClick={() => handleMonthNav('prev')} className={styles.navBtn}>
                     <ChevronLeft size={20} />
                 </button>
                 <h2 className={styles.monthTitle}>{format(currentMonth, 'yyyy년 M월')}</h2>
-                <button onClick={() => {
-                    const newDate = startOfMonth(addMonths(currentMonth, 1));
-                    onMonthChange(newDate);
-                    onDateSelect(newDate);
-                }} className={styles.navBtn}>
+                <button onClick={() => handleMonthNav('next')} className={styles.navBtn}>
                     <ChevronRight size={20} />
                 </button>
             </div>
