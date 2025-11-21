@@ -25,8 +25,8 @@ export default function TransactionList({ date, transactions }: TransactionListP
                 <div className={styles.headerLeft}>
                     <h3 className={styles.dateTitle}>{format(date, 'M월 d일 (eee)', { locale: ko })}</h3>
                     <div className={styles.summary}>
-                        {totalIncome > 0 && <span className={styles.income}>+{totalIncome.toLocaleString()}</span>}
-                        {totalExpense > 0 && <span className={styles.expense}>-{totalExpense.toLocaleString()}</span>}
+                        {totalIncome > 0 && <span className={styles.income}>+{totalIncome.toLocaleString()}원</span>}
+                        {totalExpense > 0 && <span className={styles.expense}>-{totalExpense.toLocaleString()}원</span>}
                     </div>
                 </div>
                 <Link href={`/add?date=${format(date, 'yyyy-MM-dd')}`} className={styles.addBtnHeader}>
@@ -47,7 +47,7 @@ export default function TransactionList({ date, transactions }: TransactionListP
                                 </div>
                                 <div className={styles.itemRight}>
                                     <span className={t.type === 'income' ? styles.income : styles.expense}>
-                                        {t.type === 'income' ? '+' : '-'}{t.amount.toLocaleString()}
+                                        {t.type === 'income' ? '+' : '-'}{t.amount.toLocaleString()}원
                                     </span>
                                     <span className={styles.consumer}>{t.consumer}</span>
                                 </div>

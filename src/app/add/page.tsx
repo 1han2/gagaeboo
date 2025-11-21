@@ -10,7 +10,7 @@ import Calendar from '@/components/Calendar';
 import { format } from 'date-fns';
 import { USER_LABELS } from '@/lib/config';
 import { CATEGORIES } from '@/lib/categoryConfig';
-import SuccessAnimation, { AnimationType } from '@/components/SuccessAnimation';
+import SuccessAnimation, { ANIMATION_VARIANTS } from '@/components/SuccessAnimation';
 
 export default function AddTransactionPage() {
     return (
@@ -37,7 +37,7 @@ function AddTransactionForm() {
         memo: ''
     });
     const [showAnimation, setShowAnimation] = useState(false);
-    const [animationType, setAnimationType] = useState<AnimationType>('highFive');
+    const [animationVariantIndex, setAnimationVariantIndex] = useState(0);
     const [isSaveComplete, setIsSaveComplete] = useState(false);
     const [isAnimationComplete, setIsAnimationComplete] = useState(false);
 
@@ -77,35 +77,43 @@ function AddTransactionForm() {
         setIsSaveComplete(false);
         setIsAnimationComplete(false);
 
-        // Trigger animation IMMEDIATELY
-        const type: AnimationType = Math.random() > 0.5 ? 'highFive' : 'money';
-        setAnimationType(type);
-        setShowAnimation(true);
-
-        const transactionData: Transaction = {
-            id: idParam || crypto.randomUUID(),
-            date: formData.date,
-            amount: Number(formData.amount),
-            category: formData.category,
-            merchant: formData.merchant,
-            consumer: formData.consumer,
-            type: formData.type,
-            memo: formData.memo
-        };
-
-        try {
-            if (idParam) {
-                await updateTransaction(transactionData);
-            } else {
-                await addTransaction(transactionData);
-            }
-            setIsSaveComplete(true);
-        } catch (error) {
-            console.error('Error saving transaction:', error);
-            alert('저장 중 오류가 발생했습니다.');
-            setShowAnimation(false); // Stop animation on error
-            setLoading(false);
+        // Trigger animation IMMEDIATELY (only for new transactions)
+        if (!idParam) {
+            const randomIndex = Math.floor(Math.random() * ANIMATION_VARIANTS.length);
+            setAnimationVariantIndex(randomIndex);
+            setShowAnimation(true);
         }
+
+        // Defer save to ensure animation starts rendering first
+        setTimeout(async () => {
+            const transactionData: Transaction = {
+                id: idParam || crypto.randomUUID(),
+                date: formData.date,
+                amount: Number(formData.amount),
+                category: formData.category,
+                merchant: formData.merchant,
+                consumer: formData.consumer,
+                type: formData.type,
+                memo: formData.memo
+            };
+
+            try {
+                if (idParam) {
+                    await updateTransaction(transactionData);
+                    // For edits, redirect immediately as there's no animation
+                    router.replace(`/?date=${formData.date}`, { scroll: false });
+                    router.refresh();
+                } else {
+                    await addTransaction(transactionData);
+                }
+                setIsSaveComplete(true);
+            } catch (error) {
+                console.error('Error saving transaction:', error);
+                alert('저장 중 오류가 발생했습니다.');
+                setShowAnimation(false); // Stop animation on error
+                setLoading(false);
+            }
+        }, 100);
     };
 
     const handleAnimationComplete = () => {
@@ -121,7 +129,7 @@ function AddTransactionForm() {
         <main className={`container ${styles.mainContainer}`}>
             {showAnimation && (
                 <SuccessAnimation
-                    type={animationType}
+                    variantIndex={animationVariantIndex}
                     onComplete={handleAnimationComplete}
                 />
             )}
@@ -180,17 +188,37 @@ function AddTransactionForm() {
                                 </button>
                             </div>
 
+                            <div className={styles.formGroup}>
+                                <label className="label">날짜</label>
+                                <input
+                                    type="date"
+                                    name="date"
+                                    value={formData.date}
+                                    onChange={handleChange}
+                                    className="input"
+                                    required
+                                />
+                            </div>
+
                             <div className={styles.formRow}>
                                 <div className={styles.formGroup}>
-                                    <label className="label">날짜</label>
-                                    <input
-                                        type="date"
-                                        name="date"
-                                        value={formData.date}
-                                        onChange={handleChange}
-                                        className="input"
-                                        required
-                                    />
+                                    <label className="label">금액</label>
+                                    <div className={styles.amountInputWrapper}>
+                                        <span className={styles.currencySymbol}>₩</span>
+                                        <input
+                                            type="text"
+                                            name="amount"
+                                            value={formData.amount ? Number(formData.amount).toLocaleString() : ''}
+                                            onChange={(e) => {
+                                                const value = e.target.value.replace(/[^0-9]/g, '');
+                                                setFormData(prev => ({ ...prev, amount: value }));
+                                            }}
+                                            className={`${styles.input} ${styles.amountInput}`}
+                                            placeholder="0"
+                                            required
+                                            inputMode="numeric"
+                                        />
+                                    </div>
                                 </div>
                                 <div className={styles.formGroup}>
                                     <label className="label">사용자</label>
@@ -204,26 +232,6 @@ function AddTransactionForm() {
                                         <option value={USER_LABELS.person1}>{USER_LABELS.person1}</option>
                                         <option value={USER_LABELS.person2}>{USER_LABELS.person2}</option>
                                     </select>
-                                </div>
-                            </div>
-
-                            <div className={styles.formGroup}>
-                                <label className="label">금액</label>
-                                <div className={styles.amountInputWrapper}>
-                                    <span className={styles.currencySymbol}>₩</span>
-                                    <input
-                                        type="text"
-                                        name="amount"
-                                        value={formData.amount ? Number(formData.amount).toLocaleString() : ''}
-                                        onChange={(e) => {
-                                            const value = e.target.value.replace(/[^0-9]/g, '');
-                                            setFormData(prev => ({ ...prev, amount: value }));
-                                        }}
-                                        className={`${styles.input} ${styles.amountInput}`}
-                                        placeholder="0"
-                                        required
-                                        inputMode="numeric"
-                                    />
                                 </div>
                             </div>
 
