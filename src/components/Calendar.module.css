@@ -110,6 +110,11 @@
     color: var(--primary);
 }
 
+.highExpense {
+    color: var(--danger) !important;
+    font-weight: 700;
+}
+
 .incomeText {
     color: var(--primary);
 }

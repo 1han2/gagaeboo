@@ -105,7 +105,11 @@ export default function Calendar({ transactions, onDateSelect, selectedDate, cur
                                     </div>
                                     {(income > 0 || expense > 0) && (
                                         <div className={styles.dayTotal}>
-                                            {expense > 0 && <span className={styles.expenseText}>-{expense.toLocaleString()}</span>}
+                                            {expense > 0 && (
+                                                <span className={`${styles.expenseText} ${expense >= 100000 ? styles.highExpense : ''}`}>
+                                                    -{expense.toLocaleString()}
+                                                </span>
+                                            )}
                                             {income > 0 && <span className={styles.incomeText}>+{income.toLocaleString()}</span>}
                                         </div>
                                     )}
