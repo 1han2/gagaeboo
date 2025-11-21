@@ -10,6 +10,12 @@
     /* Removed to prevent overflow in fixed height */
 }
 
+@media (max-width: 768px) {
+    .container {
+        margin-bottom: 1rem;
+    }
+}
+
 .header {
     padding: 0.5rem 0.75rem;
     background-color: white;
