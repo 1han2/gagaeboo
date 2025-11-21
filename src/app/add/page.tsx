@@ -133,11 +133,18 @@ function AddTransactionForm() {
                     <button
                         onClick={async () => {
                             if (confirm('정말 삭제하시겠습니까?')) {
-                                setLoading(true);
-                                setIsDeleting(true);
-                                await deleteTransaction(idParam);
-                                router.back();
-                                router.refresh();
+                                try {
+                                    setLoading(true);
+                                    setIsDeleting(true);
+                                    await deleteTransaction(idParam);
+                                    router.replace(`/?date=${formData.date}`, { scroll: false });
+                                    router.refresh();
+                                } catch (error) {
+                                    console.error('Failed to delete transaction:', error);
+                                    alert('삭제 중 오류가 발생했습니다.');
+                                    setLoading(false);
+                                    setIsDeleting(false);
+                                }
                             }
                         }}
                         className={styles.deleteBtnHeader}

@@ -200,7 +200,7 @@ select.input {
     font-weight: 600;
 }
 
-.floatingButtonContainer {
+.floatingBtnContainer {
     position: fixed;
     bottom: 68px;
     /* Height of Navbar */
@@ -214,9 +214,27 @@ select.input {
     pointer-events: none;
 }
 
-.floatingButtonContainer button {
+.floatingBtnContainer button {
     pointer-events: auto;
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.submitBtn {
+    width: 100%;
+    padding: 1rem;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: white;
+    background-color: var(--primary);
+    border: none;
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.submitBtn:disabled {
+    background-color: var(--text-secondary);
+    cursor: not-allowed;
 }
 
 .deleteBtnHeader {
@@ -290,7 +308,7 @@ select.input {
         /* Desktop: Increased padding further as requested */
     }
 
-    .floatingButtonContainer {
+    .floatingBtnContainer {
         position: absolute;
         bottom: 5rem;
         left: 50%;
