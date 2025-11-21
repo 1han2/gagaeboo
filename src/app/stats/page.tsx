@@ -57,54 +57,56 @@ export default function StatsPage() {
         : 0;
 
     return (
-        <main className="container" style={{ paddingBottom: '5rem' }}>
-            <div className={styles.header}>
-                <button onClick={() => setCurrentMonth(subMonths(currentMonth, 1))} className={styles.navBtn}>
-                    <ChevronLeft size={24} />
-                </button>
-                <h2 className={styles.monthTitle}>{format(currentMonth, 'yyyy년 M월')}</h2>
-                <button onClick={() => setCurrentMonth(addMonths(currentMonth, 1))} className={styles.navBtn}>
-                    <ChevronRight size={24} />
-                </button>
-            </div>
-
-            <div className={styles.toggleContainer}>
-                <button
-                    className={`${styles.toggleBtn} ${viewType === 'expense' ? styles.active : ''}`}
-                    onClick={() => setViewType('expense')}
-                >
-                    지출
-                </button>
-                <button
-                    className={`${styles.toggleBtn} ${viewType === 'income' ? styles.active : ''}`}
-                    onClick={() => setViewType('income')}
-                >
-                    수입
-                </button>
-            </div>
-
-            <div className={styles.filterContainer}>
-                {['전체', '함께', USER_LABELS.person1, USER_LABELS.person2].map(consumer => (
-                    <button
-                        key={consumer}
-                        className={`${styles.filterBtn} ${selectedConsumer === consumer ? styles.activeFilter : ''}`}
-                        onClick={() => setSelectedConsumer(consumer)}
-                    >
-                        {consumer}
+        <main style={{ paddingBottom: '5rem' }}>
+            <div className="container" style={{ paddingBottom: 0 }}>
+                <div className={styles.header}>
+                    <button onClick={() => setCurrentMonth(subMonths(currentMonth, 1))} className={styles.navBtn}>
+                        <ChevronLeft size={24} />
                     </button>
-                ))}
+                    <h2 className={styles.monthTitle}>{format(currentMonth, 'yyyy년 M월')}</h2>
+                    <button onClick={() => setCurrentMonth(addMonths(currentMonth, 1))} className={styles.navBtn}>
+                        <ChevronRight size={24} />
+                    </button>
+                </div>
+
+                <div className={styles.toggleContainer}>
+                    <button
+                        className={`${styles.toggleBtn} ${viewType === 'expense' ? styles.active : ''}`}
+                        onClick={() => setViewType('expense')}
+                    >
+                        지출
+                    </button>
+                    <button
+                        className={`${styles.toggleBtn} ${viewType === 'income' ? styles.active : ''}`}
+                        onClick={() => setViewType('income')}
+                    >
+                        수입
+                    </button>
+                </div>
+
+                <div className={styles.filterContainer}>
+                    {['전체', '함께', USER_LABELS.person1, USER_LABELS.person2].map(consumer => (
+                        <button
+                            key={consumer}
+                            className={`${styles.filterBtn} ${selectedConsumer === consumer ? styles.activeFilter : ''}`}
+                            onClick={() => setSelectedConsumer(consumer)}
+                        >
+                            {consumer}
+                        </button>
+                    ))}
+                </div>
             </div>
 
-            <div className="card">
+            <div style={{ backgroundColor: 'white', width: '100%', padding: '1.5rem 1rem', minHeight: '50vh' }}>
                 {loading ? (
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                    <div className="container" style={{ display: 'flex', flexDirection: 'column', gap: '1rem', paddingBottom: 0 }}>
                         <Skeleton style={{ width: '40%', height: '18px' }} />
                         <Skeleton style={{ width: '60%', height: '36px' }} />
                         <Skeleton style={{ width: '100%', height: '260px' }} />
                     </div>
                 ) : (
-                    <>
-                        <div className={styles.totalContainer}>
+                    <div className="container" style={{ paddingBottom: 0 }}>
+                        <div className={styles.totalContainer} style={{ backgroundColor: 'transparent', padding: '0 0 1.5rem 0' }}>
                             <span className={styles.totalLabel}>{selectedConsumer} 총 {viewType === 'income' ? '수입' : '지출'}</span>
                             <span className={`${styles.totalAmount} ${viewType === 'income' ? styles.income : styles.expense}`}>
                                 {totalAmount.toLocaleString()}원
@@ -126,7 +128,7 @@ export default function StatsPage() {
                         <div className={styles.chartContainer}>
                             <StatsChart transactions={filteredTransactions} prevTransactions={filteredPrevTransactions} type={viewType} />
                         </div>
-                    </>
+                    </div>
                 )}
             </div>
         </main>

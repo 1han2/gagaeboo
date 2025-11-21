@@ -2,7 +2,6 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 1.25rem;
     padding-bottom: 0.75rem;
     border-bottom: 2px solid var(--bg-main);
 }
@@ -52,6 +51,17 @@
 
 .formGroup {
     margin-bottom: 1.25rem;
+}
+
+.formRow {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+}
+
+.formRow .formGroup {
+    flex: 1;
+    margin-bottom: 0;
 }
 
 .typeToggle {
@@ -162,8 +172,106 @@
     font-weight: 600;
 }
 
+.floatingButtonContainer {
+    position: fixed;
+    bottom: 68px;
+    /* Height of Navbar */
+    left: 50%;
+    transform: translateX(-50%);
+    width: 93%;
+    /* right: 0; */
+    padding: 1rem 0;
+    background: transparent;
+    z-index: 10;
+    pointer-events: none;
+}
+
+.floatingButtonContainer button {
+    pointer-events: auto;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.deleteBtnHeader {
+    color: var(--danger);
+    padding: 0.5rem;
+    border-radius: 50%;
+    transition: background-color 0.2s;
+}
+
+.deleteBtnHeader:hover {
+    background-color: #fee2e2;
+}
+
 @media (max-width: 400px) {
     .categoryGrid {
         grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+.formCard {
+    min-height: 100%;
+    padding-bottom: 4rem;
+    /* Mobile: Reduced padding as requested */
+}
+
+.mainContainer {
+    padding-bottom: 5rem;
+    /* Default mobile padding */
+}
+
+@media (min-width: 1024px) {
+    .mainContainer {
+        height: 100vh;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        padding-bottom: 0;
+    }
+
+    .desktopLayout {
+        flex: 1;
+        overflow: hidden;
+        height: auto;
+        /* Override global if needed, but flex handles it */
+    }
+
+    .desktopLeft {
+        height: 100% !important;
+        /* Override global calc */
+        overflow-y: auto;
+    }
+
+    .desktopRightWrapper {
+        display: flex;
+        flex-direction: column;
+        height: 100% !important;
+        /* Override global calc */
+        position: relative;
+    }
+
+    .scrollableFormArea {
+        flex: 1;
+        overflow-y: auto;
+        /* padding-bottom: 7rem; */
+        /* Removed, handled by formCard */
+        /* Hide scrollbar for cleaner look if desired, or keep default */
+    }
+
+    .formCard {
+        padding-bottom: 0.5rem;
+        margin-bottom: 11rem;
+        /* Desktop: Increased padding further as requested */
+    }
+
+    .floatingButtonContainer {
+        position: absolute;
+        bottom: 5rem;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 93%;
+        background: transparent;
+        border-top: none;
+        box-shadow: none;
+        padding: 1rem 0;
     }
 }

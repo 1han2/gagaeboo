@@ -9,6 +9,8 @@ import { getTransactions } from '@/lib/dataService';
 import { Transaction } from '@/lib/types';
 import { format } from 'date-fns';
 
+import styles from './page.module.css';
+
 export default function Home() {
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -45,7 +47,7 @@ export default function Home() {
     .reduce((sum, t) => sum + t.amount, 0);
 
   return (
-    <main className="container" style={{ paddingBottom: '5rem' }}>
+    <main className={`container ${styles.mainContainer}`}>
       <div
         style={{
           marginBottom: '1rem',
@@ -73,8 +75,8 @@ export default function Home() {
         </>
       </div>
 
-      <div className="desktop-layout">
-        <div className="desktop-left">
+      <div className={`desktop-layout ${styles.desktopLayout}`}>
+        <div className={`desktop-left ${styles.desktopLeft}`}>
           <Calendar
             transactions={transactions}
             onDateSelect={handleDateSelect}
@@ -84,7 +86,7 @@ export default function Home() {
             isLoading={loading}
           />
         </div>
-        <div className="desktop-right">
+        <div className={`desktop-right ${styles.desktopRight}`}>
           {loading ? (
             <div className="card" style={{ minHeight: '400px' }}>
               <Skeleton style={{ width: '60%', height: '22px', marginBottom: '1rem' }} />

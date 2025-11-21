@@ -8,6 +8,8 @@ import styles from './Navbar.module.css';
 export default function Navbar() {
     const pathname = usePathname();
 
+
+
     return (
         <nav className={styles.nav}>
             <Link href="/" className={`${styles.link} ${pathname === '/' ? styles.active : ''}`}>

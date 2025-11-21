@@ -14,6 +14,7 @@ import { Bar } from 'react-chartjs-2';
 import { Transaction } from '@/lib/types';
 import { useMemo, useState } from 'react';
 import Link from 'next/link';
+import { getCategoryColor } from '@/lib/categoryConfig';
 
 ChartJS.register(
     ArcElement,
@@ -62,23 +63,7 @@ export default function StatsChart({ transactions, prevTransactions = [], type }
         const values = sorted.map(i => i.value);
         const prevValues = sorted.map(i => i.prevValue);
 
-        // Color palette for categories
-        const colorPalette = [
-            '#4f46e5', // Indigo
-            '#ec4899', // Pink
-            '#8b5cf6', // Violet
-            '#06b6d4', // Cyan
-            '#10b981', // Emerald
-            '#f59e0b', // Amber
-            '#ef4444', // Red
-            '#6366f1', // Indigo lighter
-            '#14b8a6', // Teal
-            '#f97316', // Orange
-            '#a855f7', // Purple
-            '#84cc16', // Lime
-        ];
-
-        const categoryColors = labels.map((_, index) => colorPalette[index % colorPalette.length]);
+        const categoryColors = labels.map(label => getCategoryColor(label));
 
         const hasPrevData = prevValues.some(value => value > 0);
 
@@ -111,8 +96,12 @@ export default function StatsChart({ transactions, prevTransactions = [], type }
         };
     }, [transactions, prevTransactions, type]);
 
-    if (transactions.length === 0) {
-        return <div style={{ textAlign: 'center', color: 'var(--text-muted)', padding: '2rem' }}>데이터가 없습니다</div>;
+    const hasData = useMemo(() => {
+        return transactions.some(t => t.type === type);
+    }, [transactions, type]);
+
+    if (!hasData) {
+        return <div style={{ textAlign: 'center', color: 'var(--text-muted)', padding: '4rem 0' }}>표시할 내역이 없습니다</div>;
     }
 
     const getCategoryTransactions = (category: string) => {
@@ -123,15 +112,27 @@ export default function StatsChart({ transactions, prevTransactions = [], type }
 
     return (
         <div style={{ width: '100%', paddingBottom: selectedCategory ? '300px' : '0' }}>
-            <div style={{ position: 'relative', height: '250px', width: '100%', marginBottom: '2rem' }}>
+            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '1rem', marginBottom: '0.5rem', fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                    <div style={{ width: '8px', height: '8px', borderRadius: '2px', backgroundColor: '#cbd5e1' }}></div>
+                    <span>지난 달</span>
+                </div>
+            </div>
+            <div style={{ position: 'relative', height: '250px', width: '100%', marginBottom: '1rem' }}>
                 <Bar
                     data={data}
                     options={{
                         responsive: true,
                         maintainAspectRatio: false,
+                        layout: {
+                            padding: {
+                                top: 10,
+                                bottom: 10
+                            }
+                        },
                         plugins: {
                             legend: {
-                                display: false, // Hide legend for bar chart as x-axis has labels
+                                display: false,
                             },
                             tooltip: {
                                 callbacks: {
@@ -147,10 +148,15 @@ export default function StatsChart({ transactions, prevTransactions = [], type }
                                     color: '#f1f5f9',
                                 },
                                 ticks: {
-                                    callback: (value) => `${Number(value).toLocaleString()}`,
+                                    callback: (value) => {
+                                        const val = Number(value);
+                                        if (val === 0) return '0';
+                                        return `${val / 10000}만`;
+                                    },
                                     font: {
                                         size: 10
-                                    }
+                                    },
+                                    padding: 5
                                 },
                                 border: {
                                     display: false
@@ -183,7 +189,7 @@ export default function StatsChart({ transactions, prevTransactions = [], type }
                                 display: 'flex',
                                 justifyContent: 'space-between',
                                 alignItems: 'center',
-                                padding: '0.75rem',
+                                padding: '1rem',
                                 backgroundColor: isSelected ? '#e0e7ff' : 'var(--bg-main)',
                                 borderRadius: 'var(--radius)',
                                 border: 'none',
@@ -192,7 +198,7 @@ export default function StatsChart({ transactions, prevTransactions = [], type }
                                 transition: 'all 0.2s'
                             }}
                         >
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
                                 <div style={{
                                     width: '12px',
                                     height: '12px',

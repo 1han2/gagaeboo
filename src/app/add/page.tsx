@@ -4,11 +4,12 @@ import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { addTransaction, updateTransaction, deleteTransaction, getTransactions } from '@/lib/dataService';
 import { Transaction } from '@/lib/types';
-import { ChevronLeft } from 'lucide-react';
+import { ChevronLeft, Trash2 } from 'lucide-react';
 import styles from './page.module.css';
 import Calendar from '@/components/Calendar';
 import { format } from 'date-fns';
 import { USER_LABELS } from '@/lib/config';
+import { CATEGORIES } from '@/lib/categoryConfig';
 
 function AddTransactionForm() {
     const router = useRouter();
@@ -103,17 +104,34 @@ function AddTransactionForm() {
     };
 
     return (
-        <main className="container" style={{ paddingBottom: '5rem' }}>
+        <main className={`container ${styles.mainContainer}`}>
             <div className={styles.header}>
                 <button onClick={() => router.back()} className={styles.backBtn}>
                     <ChevronLeft size={24} />
                 </button>
-                <h1 className={styles.pageTitle}>{idParam ? '내역 수정' : '내역 수정'}</h1>
-                <div style={{ width: 24 }} />
+                <h1 className={styles.pageTitle}>{idParam ? '내역 수정' : '내역 추가'}</h1>
+                {idParam ? (
+                    <button
+                        onClick={async () => {
+                            if (confirm('정말 삭제하시겠습니까?')) {
+                                setLoading(true);
+                                await deleteTransaction(idParam);
+                                router.back();
+                                router.refresh();
+                            }
+                        }}
+                        className={styles.deleteBtnHeader}
+                        disabled={loading}
+                    >
+                        <Trash2 size={20} />
+                    </button>
+                ) : (
+                    <div style={{ width: 24 }} />
+                )}
             </div>
 
-            <div className="desktop-layout">
-                <div className="desktop-left hide-on-mobile">
+            <div className={`desktop-layout ${styles.desktopLayout}`}>
+                <div className={`desktop-left hide-on-mobile ${styles.desktopLeft}`}>
                     <Calendar
                         transactions={[]}
                         selectedDate={new Date(formData.date)}
@@ -122,148 +140,119 @@ function AddTransactionForm() {
                         onMonthChange={() => { }}
                     />
                 </div>
-                <div className="desktop-right">
-                    <form id="transaction-form" onSubmit={handleSubmit} className="card">
-                        <div className={styles.typeToggle}>
-                            <button
-                                type="button"
-                                className={`${styles.typeBtn} ${formData.type === 'expense' ? styles.activeExpense : ''}`}
-                                onClick={() => setFormData(prev => ({ ...prev, type: 'expense' }))}
-                            >
-                                지출
-                            </button>
-                            <button
-                                type="button"
-                                className={`${styles.typeBtn} ${formData.type === 'income' ? styles.activeIncome : ''}`}
-                                onClick={() => setFormData(prev => ({ ...prev, type: 'income' }))}
-                            >
-                                수입
-                            </button>
-                        </div>
-
-                        <div className={styles.formGroup}>
-                            <label className="label">날짜</label>
-                            <input
-                                type="date"
-                                name="date"
-                                value={formData.date}
-                                onChange={handleChange}
-                                className="input"
-                                required
-                            />
-                        </div>
-
-                        <div className={styles.formGroup}>
-                            <label className="label">금액</label>
-                            <div className={styles.amountInputWrapper}>
-                                <span className={styles.currencySymbol}>₩</span>
-                                <input
-                                    type="text"
-                                    name="amount"
-                                    value={formData.amount ? Number(formData.amount).toLocaleString() : ''}
-                                    onChange={(e) => {
-                                        const value = e.target.value.replace(/[^0-9]/g, '');
-                                        setFormData(prev => ({ ...prev, amount: value }));
-                                    }}
-                                    className={`${styles.input} ${styles.amountInput}`}
-                                    placeholder="0"
-                                    required
-                                    inputMode="numeric"
-                                />
-                            </div>
-                        </div>
-
-                        {formData.type === 'expense' && (
-                            <div className={styles.formGroup}>
-                                <label className="label">카테고리</label>
-                                <div className={styles.categoryGrid}>
-                                    {[
-                                        { name: '식비', icon: '🍚' },
-                                        { name: '카페', icon: '☕' },
-                                        { name: '외식', icon: '🍽️' },
-                                        { name: '교통', icon: '🚌' },
-                                        { name: '쇼핑', icon: '🛍️' },
-                                        { name: '생활', icon: '🏠' },
-                                        { name: '주거/통신', icon: '📱' },
-                                        { name: '의료/건강', icon: '💊' },
-                                        { name: '미용', icon: '💇' },
-                                        { name: '금융', icon: '💰' },
-                                        { name: '문화/여가', icon: '🎬' },
-                                        { name: '교육/학습', icon: '📚' },
-                                        { name: '자녀/육아', icon: '👶' },
-                                        { name: '반려동물', icon: '🐾' },
-                                        { name: '경조사/선물', icon: '🎁' },
-                                        { name: '기타', icon: '🎸' },
-                                    ].map((cat) => (
-                                        <button
-                                            key={cat.name}
-                                            type="button"
-                                            onClick={() => setFormData(prev => ({ ...prev, category: cat.name }))}
-                                            className={`${styles.categoryBtn} ${formData.category === cat.name ? styles.activeCategory : ''}`}
-                                        >
-                                            <span className={styles.catIcon}>{cat.icon}</span>
-                                            <span className={styles.catName}>{cat.name}</span>
-                                        </button>
-                                    ))}
-                                </div>
-                            </div>
-                        )}
-
-                        <div className={styles.formGroup}>
-                            <label className="label">{formData.type === 'income' ? '수입처' : '사용처'}</label>
-                            <input
-                                type="text"
-                                name="merchant"
-                                value={formData.merchant}
-                                onChange={handleChange}
-                                className="input"
-                                placeholder={formData.type === 'income' ? '예: 월급' : '예: 스타벅스'}
-                                required
-                            />
-                        </div>
-
-                        <div className={styles.formGroup}>
-                            <label className="label">사용자</label>
-                            <select
-                                name="consumer"
-                                value={formData.consumer}
-                                onChange={handleChange}
-                                className="input"
-                            >
-                                <option value="함께">함께</option>
-                                <option value={USER_LABELS.person1}>{USER_LABELS.person1}</option>
-                                <option value={USER_LABELS.person2}>{USER_LABELS.person2}</option>
-                            </select>
-                        </div>
-
-                        <div className={styles.actionButtons}>
-                            {idParam && (
+                <div className={`desktop-right ${styles.desktopRightWrapper}`}>
+                    <div className={styles.scrollableFormArea}>
+                        <form id="transaction-form" onSubmit={handleSubmit} className={`card ${styles.formCard}`}>
+                            <div className={styles.typeToggle}>
                                 <button
                                     type="button"
-                                    onClick={async () => {
-                                        if (confirm('정말 삭제하시겠습니까?')) {
-                                            setLoading(true);
-                                            await deleteTransaction(idParam);
-                                            router.back();
-                                            router.refresh();
-                                        }
-                                    }}
-                                    className={`btn ${styles.deleteBtn}`}
-                                    disabled={loading}
+                                    className={`${styles.typeBtn} ${formData.type === 'expense' ? styles.activeExpense : ''}`}
+                                    onClick={() => setFormData(prev => ({ ...prev, type: 'expense' }))}
                                 >
-                                    삭제
+                                    지출
                                 </button>
+                                <button
+                                    type="button"
+                                    className={`${styles.typeBtn} ${formData.type === 'income' ? styles.activeIncome : ''}`}
+                                    onClick={() => setFormData(prev => ({ ...prev, type: 'income' }))}
+                                >
+                                    수입
+                                </button>
+                            </div>
+
+                            <div className={styles.formRow}>
+                                <div className={styles.formGroup}>
+                                    <label className="label">날짜</label>
+                                    <input
+                                        type="date"
+                                        name="date"
+                                        value={formData.date}
+                                        onChange={handleChange}
+                                        className="input"
+                                        required
+                                    />
+                                </div>
+                                <div className={styles.formGroup}>
+                                    <label className="label">사용자</label>
+                                    <select
+                                        name="consumer"
+                                        value={formData.consumer}
+                                        onChange={handleChange}
+                                        className="input"
+                                    >
+                                        <option value="함께">함께</option>
+                                        <option value={USER_LABELS.person1}>{USER_LABELS.person1}</option>
+                                        <option value={USER_LABELS.person2}>{USER_LABELS.person2}</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div className={styles.formGroup}>
+                                <label className="label">금액</label>
+                                <div className={styles.amountInputWrapper}>
+                                    <span className={styles.currencySymbol}>₩</span>
+                                    <input
+                                        type="text"
+                                        name="amount"
+                                        value={formData.amount ? Number(formData.amount).toLocaleString() : ''}
+                                        onChange={(e) => {
+                                            const value = e.target.value.replace(/[^0-9]/g, '');
+                                            setFormData(prev => ({ ...prev, amount: value }));
+                                        }}
+                                        className={`${styles.input} ${styles.amountInput}`}
+                                        placeholder="0"
+                                        required
+                                        inputMode="numeric"
+                                    />
+                                </div>
+                            </div>
+
+                            <div className={styles.formGroup}>
+                                <label className="label">{formData.type === 'income' ? '수입처' : '사용처'}</label>
+                                <input
+                                    type="text"
+                                    name="merchant"
+                                    value={formData.merchant}
+                                    onChange={handleChange}
+                                    className="input"
+                                    placeholder={formData.type === 'income' ? '예: 월급' : '예: 스타벅스'}
+                                    required
+                                />
+                            </div>
+
+                            {formData.type === 'expense' && (
+                                <div className={styles.formGroup}>
+                                    <label className="label">카테고리</label>
+                                    <div className={styles.categoryGrid}>
+                                        {CATEGORIES.map((cat) => (
+                                            <button
+                                                key={cat.name}
+                                                type="button"
+                                                onClick={() => setFormData(prev => ({ ...prev, category: cat.name }))}
+                                                className={`${styles.categoryBtn} ${formData.category === cat.name ? styles.activeCategory : ''}`}
+                                            >
+                                                <span className={styles.catIcon}>{cat.icon}</span>
+                                                <span className={styles.catName}>{cat.name}</span>
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
                             )}
-                            <button
-                                type="submit"
-                                className="btn btn-primary"
-                                style={{ flex: idParam ? 2 : 1 }}
-                                disabled={loading}
-                            >
-                                {loading ? '저장 중...' : (idParam ? '수정' : '저장')}
-                            </button>
-                        </div>
-                    </form>
+
+
+                        </form>
+                    </div>
+                    <div className={styles.floatingButtonContainer}>
+                        <button
+                            type="submit"
+                            form="transaction-form"
+                            className="btn btn-primary"
+                            style={{ width: '100%', padding: '1rem', fontSize: '1.1rem' }}
+                            disabled={loading}
+                        >
+                            {loading ? '저장 중...' : (idParam ? '수정' : '추가')}
+                        </button>
+                    </div>
                 </div>
             </div>
         </main>
