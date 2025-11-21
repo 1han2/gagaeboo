@@ -1,0 +1,193 @@
+.overlay {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(4px);
+    z-index: 2000;
+    animation: fadeIn 0.3s ease-out;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+/* High Five Animation */
+.highFiveContainer {
+    position: relative;
+    width: 200px;
+    height: 200px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.handLeft,
+.handRight {
+    font-size: 5rem;
+    position: absolute;
+    opacity: 0;
+}
+
+.handLeft {
+    left: 20px;
+    transform: rotate(-20deg) translateX(-50px);
+    animation: highFiveLeft 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+.handRight {
+    right: 20px;
+    transform: rotate(20deg) translateX(50px) scaleX(-1);
+    animation: highFiveRight 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+.clapEffect {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    width: 100px;
+    height: 100px;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0) 70%);
+    border-radius: 50%;
+    animation: clapImpact 0.4s ease-out 0.4s forwards;
+}
+
+/* Money Animation */
+.moneyContainer {
+    position: relative;
+    width: 200px;
+    height: 200px;
+}
+
+.money {
+    position: absolute;
+    font-size: 3rem;
+    opacity: 0;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.money:nth-child(1) {
+    animation: moneyFly 1.5s ease-out 0s forwards;
+}
+
+.money:nth-child(2) {
+    animation: moneyFly 1.5s ease-out 0.2s forwards;
+    font-size: 2.5rem;
+    left: 40%;
+}
+
+.money:nth-child(3) {
+    animation: moneyFly 1.5s ease-out 0.4s forwards;
+    font-size: 3.5rem;
+    left: 60%;
+}
+
+.money:nth-child(4) {
+    animation: moneyFly 1.5s ease-out 0.6s forwards;
+    font-size: 2.8rem;
+    left: 30%;
+}
+
+.money:nth-child(5) {
+    animation: moneyFly 1.5s ease-out 0.8s forwards;
+    font-size: 3.2rem;
+    left: 70%;
+}
+
+.message {
+    margin-top: 2rem;
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--text-main);
+    animation: slideUp 0.5s ease-out 0.5s forwards;
+    opacity: 0;
+    transform: translateY(20px);
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes highFiveLeft {
+    0% {
+        opacity: 0;
+        transform: rotate(-40deg) translateX(-100px);
+    }
+
+    50% {
+        opacity: 1;
+        transform: rotate(-20deg) translateX(0);
+    }
+
+    100% {
+        opacity: 1;
+        transform: rotate(-10deg) translateX(10px);
+    }
+}
+
+@keyframes highFiveRight {
+    0% {
+        opacity: 0;
+        transform: rotate(40deg) translateX(100px) scaleX(-1);
+    }
+
+    50% {
+        opacity: 1;
+        transform: rotate(20deg) translateX(0) scaleX(-1);
+    }
+
+    100% {
+        opacity: 1;
+        transform: rotate(10deg) translateX(-10px) scaleX(-1);
+    }
+}
+
+@keyframes clapImpact {
+    0% {
+        transform: translate(-50%, -50%) scale(0);
+        opacity: 0.8;
+    }
+
+    100% {
+        transform: translate(-50%, -50%) scale(2);
+        opacity: 0;
+    }
+}
+
+@keyframes moneyFly {
+    0% {
+        opacity: 0;
+        transform: translateX(-50%) translateY(50px) scale(0.5);
+    }
+
+    20% {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0) scale(1);
+    }
+
+    100% {
+        opacity: 0;
+        transform: translateX(-50%) translateY(-200px) scale(1.2) rotate(20deg);
+    }
+}
+
+@keyframes slideUp {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

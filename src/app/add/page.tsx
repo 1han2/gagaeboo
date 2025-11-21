@@ -10,6 +10,15 @@ import Calendar from '@/components/Calendar';
 import { format } from 'date-fns';
 import { USER_LABELS } from '@/lib/config';
 import { CATEGORIES } from '@/lib/categoryConfig';
+import SuccessAnimation, { AnimationType } from '@/components/SuccessAnimation';
+
+export default function AddTransactionPage() {
+    return (
+        <Suspense fallback={<div>Loading...</div>}>
+            <AddTransactionForm />
+        </Suspense>
+    );
+}
 
 function AddTransactionForm() {
     const router = useRouter();
@@ -27,6 +36,8 @@ function AddTransactionForm() {
         type: 'expense' as 'income' | 'expense',
         memo: ''
     });
+    const [showAnimation, setShowAnimation] = useState(false);
+    const [animationType, setAnimationType] = useState<AnimationType>('highFive');
 
     useEffect(() => {
         if (idParam) {
@@ -95,7 +106,15 @@ function AddTransactionForm() {
             await addTransaction(transactionData);
         }
 
+        // Trigger animation
+        const type: AnimationType = Math.random() > 0.5 ? 'highFive' : 'money';
+        setAnimationType(type);
+        setShowAnimation(true);
+    };
+
+    const handleAnimationComplete = () => {
         router.replace(`/?date=${formData.date}`, { scroll: false });
+        router.refresh();
     };
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -105,6 +124,12 @@ function AddTransactionForm() {
 
     return (
         <main className={`container ${styles.mainContainer}`}>
+            {showAnimation && (
+                <SuccessAnimation
+                    type={animationType}
+                    onComplete={handleAnimationComplete}
+                />
+            )}
             <div className={styles.header}>
                 <button onClick={() => router.back()} className={styles.backBtn}>
                     <ChevronLeft size={24} />
@@ -259,10 +284,4 @@ function AddTransactionForm() {
     );
 }
 
-export default function AddTransactionPage() {
-    return (
-        <Suspense fallback={<div>Loading...</div>}>
-            <AddTransactionForm />
-        </Suspense>
-    );
-}
+
