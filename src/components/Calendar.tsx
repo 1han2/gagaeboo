@@ -15,9 +15,10 @@ interface CalendarProps {
     currentMonth: Date;
     onMonthChange: (date: Date) => void;
     isLoading?: boolean;
+    disableMonthPicker?: boolean;
 }
 
-export default function Calendar({ transactions, onDateSelect, selectedDate, currentMonth, onMonthChange, isLoading }: CalendarProps) {
+export default function Calendar({ transactions, onDateSelect, selectedDate, currentMonth, onMonthChange, isLoading, disableMonthPicker = false }: CalendarProps) {
     const router = useRouter();
     const [showPicker, setShowPicker] = useState(false);
     const [pickerYear, setPickerYear] = useState(currentMonth.getFullYear());
@@ -95,7 +96,19 @@ export default function Calendar({ transactions, onDateSelect, selectedDate, cur
                 <button onClick={() => handleMonthNav('prev')} className={styles.navBtn}>
                     <ChevronLeft size={20} />
                 </button>
-                <button onClick={handlePickerOpen} className={styles.monthTitle} style={{ fontSize: '1.2rem', color: 'black', fontWeight: '700', cursor: 'pointer', background: 'none', border: 'none', padding: 0 }}>
+                <button
+                    onClick={disableMonthPicker ? undefined : handlePickerOpen}
+                    className={styles.monthTitle}
+                    style={{
+                        fontSize: '1.2rem',
+                        color: 'black',
+                        fontWeight: '700',
+                        cursor: disableMonthPicker ? 'default' : 'pointer',
+                        background: 'none',
+                        border: 'none',
+                        padding: 0
+                    }}
+                >
                     {format(currentMonth, 'yyyy년 M월')}
                 </button>
                 <button onClick={() => handleMonthNav('next')} className={styles.navBtn}>

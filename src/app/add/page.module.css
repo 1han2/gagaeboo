@@ -155,7 +155,7 @@ select.input {
     background-position: right 1rem center;
     background-size: 1em;
     padding-right: 2.5rem;
-    height: 3rem;
+    height: 3rem !important;
     /* Enforce fixed height */
 }
 
@@ -266,13 +266,13 @@ select.input {
     /* Default mobile padding */
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 768px) {
     .mainContainer {
-        height: 100vh;
+        height: 100dvh;
         overflow: hidden;
         display: flex;
         flex-direction: column;
-        padding-bottom: 0;
+        padding-bottom: 5rem;
     }
 
     .desktopLayout {
@@ -306,13 +306,13 @@ select.input {
 
     .formCard {
         padding-bottom: 0.5rem;
-        margin-bottom: 11rem;
+        margin-bottom: 6rem;
         /* Desktop: Increased padding further as requested */
     }
 
     .floatingBtnContainer {
         position: absolute;
-        bottom: 5rem;
+        bottom: 0rem;
         left: 50%;
         transform: translateX(-50%);
         width: 93%;

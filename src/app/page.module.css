@@ -37,7 +37,7 @@
   }
 
   .desktopRight {
-    height: 600px;
+    height: 537px;
     /* Fixed height to match calendar approx */
     overflow-y: hidden;
     /* Container doesn't scroll */

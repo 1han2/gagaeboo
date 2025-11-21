@@ -166,6 +166,7 @@ function AddTransactionForm() {
                         onDateSelect={(date) => setFormData(prev => ({ ...prev, date: format(date, 'yyyy-MM-dd') }))}
                         currentMonth={new Date(formData.date)}
                         onMonthChange={() => { }}
+                        disableMonthPicker={true}
                     />
                 </div>
                 <div className={`desktop-right ${styles.desktopRightWrapper}`}>

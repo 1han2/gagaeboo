@@ -22,6 +22,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    margin-bottom: 0.4rem;
 }
 
 /* ... (skipping unchanged lines) ... */
