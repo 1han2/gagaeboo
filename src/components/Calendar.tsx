@@ -74,8 +74,13 @@ export default function Calendar({ transactions, onDateSelect, selectedDate, cur
                     return (
                         <button
                             key={date.toISOString()}
-                            onClick={() => onDateSelect(date)}
-                            onDoubleClick={() => router.push(`/add?date=${format(date, 'yyyy-MM-dd')}`)}
+                            onClick={() => {
+                                if (isSameDay(date, selectedDate)) {
+                                    router.push(`/add?date=${format(date, 'yyyy-MM-dd')}`);
+                                } else {
+                                    onDateSelect(date);
+                                }
+                            }}
                             className={`${styles.dayCell} ${isSelected ? styles.selected : ''} ${isToday ? styles.today : ''}`}
                             disabled={isLoading}
                         >
