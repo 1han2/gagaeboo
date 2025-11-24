@@ -9,7 +9,7 @@ import styles from './page.module.css';
 import Calendar from '@/components/Calendar';
 import { format } from 'date-fns';
 import { USER_LABELS } from '@/lib/config';
-import { CATEGORIES } from '@/lib/categoryConfig';
+import { CATEGORIES, INCOME_CATEGORIES } from '@/lib/categoryConfig';
 import SuccessAnimation, { ANIMATION_VARIANTS } from '@/components/SuccessAnimation';
 
 export default function AddTransactionPage() {
@@ -176,14 +176,14 @@ function AddTransactionForm() {
                                 <button
                                     type="button"
                                     className={`${styles.typeBtn} ${formData.type === 'expense' ? styles.activeExpense : ''}`}
-                                    onClick={() => setFormData(prev => ({ ...prev, type: 'expense' }))}
+                                    onClick={() => setFormData(prev => ({ ...prev, type: 'expense', category: '식비' }))}
                                 >
                                     지출
                                 </button>
                                 <button
                                     type="button"
                                     className={`${styles.typeBtn} ${formData.type === 'income' ? styles.activeIncome : ''}`}
-                                    onClick={() => setFormData(prev => ({ ...prev, type: 'income' }))}
+                                    onClick={() => setFormData(prev => ({ ...prev, type: 'income', category: '월급' }))}
                                 >
                                     수입
                                 </button>
@@ -249,24 +249,22 @@ function AddTransactionForm() {
                                 />
                             </div>
 
-                            {formData.type === 'expense' && (
-                                <div className={styles.formGroup}>
-                                    <label className="label">카테고리</label>
-                                    <div className={styles.categoryGrid}>
-                                        {CATEGORIES.map((cat) => (
-                                            <button
-                                                key={cat.name}
-                                                type="button"
-                                                onClick={() => setFormData(prev => ({ ...prev, category: cat.name }))}
-                                                className={`${styles.categoryBtn} ${formData.category === cat.name ? styles.activeCategory : ''}`}
-                                            >
-                                                <span className={styles.catIcon}>{cat.icon}</span>
-                                                <span className={styles.catName}>{cat.name}</span>
-                                            </button>
-                                        ))}
-                                    </div>
+                            <div className={styles.formGroup}>
+                                <label className="label">카테고리</label>
+                                <div className={styles.categoryGrid}>
+                                    {(formData.type === 'expense' ? CATEGORIES : INCOME_CATEGORIES).map((cat) => (
+                                        <button
+                                            key={cat.name}
+                                            type="button"
+                                            onClick={() => setFormData(prev => ({ ...prev, category: cat.name }))}
+                                            className={`${styles.categoryBtn} ${formData.category === cat.name ? styles.activeCategory : ''}`}
+                                        >
+                                            <span className={styles.catIcon}>{cat.icon}</span>
+                                            <span className={styles.catName}>{cat.name}</span>
+                                        </button>
+                                    ))}
                                 </div>
-                            )}
+                            </div>
 
 
                         </form>

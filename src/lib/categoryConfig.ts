@@ -23,12 +23,23 @@ export const CATEGORY_CONFIG: Record<string, CategoryConfig> = {
     '기타': { name: '기타', icon: '🎸', color: '#64748b' }, // Slate-500
 };
 
+export const INCOME_CATEGORY_CONFIG: Record<string, CategoryConfig> = {
+    '월급': { name: '월급', icon: '💰', color: '#059669' }, // Emerald
+    '보너스': { name: '보너스', icon: '🎉', color: '#db2777' }, // Pink
+    '용돈': { name: '용돈', icon: '💵', color: '#f59e0b' }, // Amber
+    '금융/투자': { name: '금융/투자', icon: '📈', color: '#4f46e5' }, // Indigo
+    '당근': { name: '당근', icon: '🥕', color: '#f97316' }, // Orange
+    '짠테크': { name: '짠테크', icon: '🪙', color: '#8b5cf6' }, // Violet
+    '기타': { name: '기타', icon: '🎸', color: '#64748b' }, // Slate
+};
+
 export const CATEGORIES = Object.values(CATEGORY_CONFIG);
+export const INCOME_CATEGORIES = Object.values(INCOME_CATEGORY_CONFIG);
 
 export const getCategoryColor = (categoryName: string): string => {
-    return CATEGORY_CONFIG[categoryName]?.color || '#94a3b8'; // Default to slate-400 if not found
+    return CATEGORY_CONFIG[categoryName]?.color || INCOME_CATEGORY_CONFIG[categoryName]?.color || '#94a3b8';
 };
 
 export const getCategoryIcon = (categoryName: string): string => {
-    return CATEGORY_CONFIG[categoryName]?.icon || '🏷️';
+    return CATEGORY_CONFIG[categoryName]?.icon || INCOME_CATEGORY_CONFIG[categoryName]?.icon || '🏷️';
 };
